@@ -1,0 +1,5 @@
+# Optional, for the Raspberry Pi or a laptop webcam. Not installed on Vercel.
+# picamera2 comes from apt on Raspberry Pi OS: sudo apt install python3-picamera2
+opencv-python-headless>=4.9
+pyzbar>=0.1.9
+# Debian/Raspberry Pi OS also needs: sudo apt install libzbar0

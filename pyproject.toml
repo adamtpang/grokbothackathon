@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pokedex-for-people"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn>=0.32",
+  "python-multipart>=0.0.9",
+  "pillow>=10.4",
+  "redis>=5.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["pi_server*"]
+
+[tool.setuptools.package-data]
+pi_server = ["static/*"]
+
+[tool.vercel]
+entrypoint = "app.main:app"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pokédex for people</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="top">
+    <div>
+      <p class="kicker">Lumen Field Co. · Grok Bot Hackathon, Austin</p>
+      <h1>Pokédex for people</h1>
+      <p class="lede">Scan a LinkedIn QR, keep a dex of who you met, and approve the follow-up on this screen — or on a real Game Boy.</p>
+    </div>
+    <p class="link-pill" id="link-pill">Link…</p>
+  </header>
+
+  <main class="layout">
+    <section class="shell" aria-label="Pokédex">
+      <div class="shell-top">
+        <span class="led" id="led"></span>
+        <span class="lens" aria-hidden="true"></span>
+        <span class="mini-lights" aria-hidden="true"><i></i><i></i><i></i></span>
+      </div>
+      <div class="bezel">
+        <p class="bezel-label"><span id="screen-name">List</span> · 160×144</p>
+        <canvas id="lcd" width="160" height="144" aria-label="Dex screen"></canvas>
+      </div>
+      <div class="controls">
+        <div class="dpad" id="dpad">
+          <button type="button" data-dir="up" aria-label="Up">▲</button>
+          <button type="button" data-dir="left" aria-label="Left">◀</button>
+          <button type="button" data-dir="right" aria-label="Right">▶</button>
+          <button type="button" data-dir="down" aria-label="Down">▼</button>
+        </div>
+        <div class="ab">
+          <button type="button" id="btn-b" class="pad b">B<span>Back / skip</span></button>
+          <button type="button" id="btn-a" class="pad a">A<span>Open / approve</span></button>
+        </div>
+      </div>
+      <p class="keys">Arrows browse · Z or A opens and approves · X or B goes back or skips · a gamepad works</p>
+    </section>
+
+    <aside class="side">
+      <div class="counts" aria-live="polite">
+        <p><span id="seen-count">–</span><small>Seen</small></p>
+        <p><span id="caught-count">–</span><small>Caught</small></p>
+      </div>
+      <figure class="portrait-wrap">
+        <img id="portrait" alt="" width="160" height="144" />
+        <figcaption id="portrait-cap">Sprite</figcaption>
+      </figure>
+      <div id="meta" class="meta"></div>
+      <div class="actions">
+        <a class="btn primary" href="/scan">Scan someone</a>
+        <button type="button" class="btn" id="research">Demo research</button>
+        <button type="button" class="btn ghost" id="reset">Reset demo</button>
+      </div>
+      <ol id="log" class="log"></ol>
+      <p class="fine">We only scan people who agree. A photo is turned into a four-green sprite and is not used for face recognition.</p>
+    </aside>
+  </main>
+
+  <footer class="foot">
+    <span>MCP <code>/mcp</code></span>
+    <span>REST <code>/api/contacts</code></span>
+    <a href="/scan">Phone scan</a>
+    <a href="/docs">API docs</a>
+  </footer>
+
+  <script src="/static/font.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
