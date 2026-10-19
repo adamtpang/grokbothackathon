@@ -1,63 +1,378 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Garage Sale Town | Bots that buy and sell for you</title>
-<meta name="description" content="Snap a photo. A town of Grok Bots researches the price, writes the listing, and posts it live to Facebook Marketplace.">
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Garage Sale Town · Snap it. Sold.</title>
+<meta name="description" content="Snap a photo of anything. Grok Bots identify it, research real prices, write the listing, and post it to Facebook Marketplace when you press A.">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--d:#0f380f;--m:#306230;--l:#8bac0f;--x:#9bbc0f;--sky:#1b2a1b}
-*{box-sizing:border-box}body{margin:0;background:var(--d);color:var(--x);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
-.px{font-family:'Press Start 2P',monospace}
-header{display:flex;justify-content:space-between;align-items:center;padding:20px 28px}
-header .logo{font-size:14px}header a{color:var(--l);font-size:13px;text-decoration:none}
-.hero{text-align:center;padding:48px 20px 24px}
-.hero h1{font-size:clamp(22px,5vw,46px);line-height:1.35;margin:0 0 18px;text-shadow:4px 4px 0 var(--m)}
-.hero p{font-size:clamp(15px,2.2vw,20px);max-width:680px;margin:0 auto 34px;color:#cfe8a0}
-.ctas{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
-.btn{font-family:'Press Start 2P',monospace;font-size:20px;padding:22px 44px;border:4px solid var(--x);color:var(--d);background:var(--x);text-decoration:none;box-shadow:6px 6px 0 var(--m);transition:transform .08s}
-.btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--m)}.btn:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--m)}
-.btn.buy{background:transparent;color:var(--x)}
-.town{position:relative;height:230px;margin:56px auto 0;max-width:1000px;border-top:4px solid var(--m);background:linear-gradient(var(--sky),var(--d))}
-.bld{position:absolute;bottom:0;width:120px;text-align:center;font-size:9px}
-.bld .roof{height:0;border-left:60px solid transparent;border-right:60px solid transparent;border-bottom:34px solid var(--m)}
-.bld .body{height:70px;background:var(--l);color:var(--d);display:flex;align-items:center;justify-content:center;padding:6px;line-height:1.5}
-.bot{position:absolute;bottom:6px;font-size:22px;animation:walk 9s linear infinite}
-@keyframes walk{0%{left:2%}50%{left:92%}50.01%{transform:scaleX(-1)}100%{left:2%;transform:scaleX(-1)}}
-.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;max-width:1000px;margin:56px auto;padding:0 20px}
-.card{border:3px solid var(--m);padding:20px;background:#143f14}.card h3{font-size:11px;margin:0 0 12px;color:var(--x);line-height:1.6}.card p{margin:0;color:#cfe8a0;font-size:14px;line-height:1.5}
-section{max-width:1000px;margin:0 auto;padding:30px 20px}section h2{font-size:16px;margin-bottom:16px}
-.panel{border:4px solid var(--x);padding:24px;background:#143f14}
-.drop{border:3px dashed var(--l);padding:36px;text-align:center;cursor:pointer;display:block;color:#cfe8a0}
-.drop input{display:none}#preview{max-width:240px;margin-top:14px;display:none;image-rendering:auto}
-.tag{display:inline-block;font-size:9px;padding:6px 8px;background:var(--m);color:var(--x);margin-bottom:12px}
-footer{text-align:center;padding:40px;font-size:9px;color:var(--l)}
-</style></head><body>
-<header><div class="px logo">GARAGE SALE TOWN</div><a href="https://github.com/adamtpang/grokbothackathon">GitHub</a></header>
-<div class="hero">
-<h1 class="px">A town of bots that<br>buys and sells for you</h1>
-<p>Snap a photo of anything. Grok Bots identify it, research real sold prices near you and across the internet, write the listing, and post it live to Facebook Marketplace once you press A.</p>
-<div class="ctas"><a class="btn sell" href="#sell">SELL</a><a class="btn buy" href="#buy">BUY</a></div>
-</div>
-<div class="town">
-<div class="bld px" style="left:3%"><div class="roof"></div><div class="body">WORKSHOP</div></div>
-<div class="bld px" style="left:23%"><div class="roof"></div><div class="body">MARKET</div></div>
-<div class="bld px" style="left:43%"><div class="roof"></div><div class="body">PRINT SHOP</div></div>
-<div class="bld px" style="left:63%"><div class="roof"></div><div class="body">TOWN HALL</div></div>
-<div class="bld px" style="left:83%"><div class="roof"></div><div class="body">MARKETPLACE</div></div>
-<div class="bot">🤖</div><div class="bot" style="animation-delay:-3s">🤖</div><div class="bot" style="animation-delay:-6s">🤖</div>
-</div>
-<div class="steps">
-<div class="card"><h3 class="px">1. SNAP</h3><p>Photo from a phone, the Pi camera, or the Game Boy station.</p></div>
-<div class="card"><h3 class="px">2. RESEARCH</h3><p>Local comps first. Not enough? It widens to eBay sold and Amazon for a real market range.</p></div>
-<div class="card"><h3 class="px">3. WRITE</h3><p>A detailed listing: title, price, condition, specs, and pickup details.</p></div>
-<div class="card"><h3 class="px">4. PRESS A</h3><p>You approve on the Game Boy. Grok Bot posts it live to Facebook Marketplace.</p></div>
-</div>
-<section id="sell"><h2 class="px">SELL</h2><div class="panel"><span class="tag px">LIVE DEMO TONIGHT</span>
-<label class="drop"><input id="file" type="file" accept="image/*" capture="environment"><span class="px" style="font-size:12px">TAP TO SNAP AN ITEM</span><br><br><img id="preview" alt="Your item"></label>
-<p id="msg" style="color:#cfe8a0"></p></div></section>
-<section id="buy"><h2 class="px">BUY</h2><div class="panel"><span class="tag px">SCOUT BOTS</span>
-<p style="color:#cfe8a0;line-height:1.6">Scout bots watch Austin listings around the clock and flag items priced under market, with the comps to prove it. Deal feed coming online during the demo.</p></div></section>
-<footer class="px">BUILT WITH GROK BOT · AUSTIN · OCT 2026</footer>
+:root{
+  --bg:#000;--bg2:#0b0b0d;--card:#141416;--card2:#1c1c1f;--line:rgba(255,255,255,.08);
+  --text:#f5f5f7;--muted:#a1a1a6;--dim:#6e6e73;--accent:#9bbc0f;--accent2:#c7e04a;
+  --radius:28px;--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Helvetica Neue",Inter,system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--text);font-family:var(--font);-webkit-font-smoothing:antialiased;line-height:1.5;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img,svg{display:block;max-width:100%}
+.wrap{width:min(1180px,100% - 48px);margin-inline:auto}
+section{padding:clamp(96px,14vw,180px) 0;position:relative}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:50;background:rgba(0,0,0,.62);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:56px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:15px;letter-spacing:-.01em}
+.brand i{width:10px;height:10px;border-radius:3px;background:var(--accent);box-shadow:0 0 12px rgba(155,188,15,.7)}
+.nav ul{display:flex;gap:28px;list-style:none;font-size:13px;color:var(--muted)}
+.nav ul a:hover{color:var(--text)}
+.nav .mini{font-size:13px;padding:7px 16px}
+@media (max-width:720px){.nav ul{display:none}.nav .hm{display:none}}
+
+/* type */
+.eyebrow{font-size:clamp(13px,1.2vw,15px);font-weight:600;letter-spacing:.02em;color:var(--accent);margin-bottom:18px}
+h1{font-size:clamp(56px,11vw,148px);line-height:.98;letter-spacing:-.045em;font-weight:700}
+h2{font-size:clamp(40px,6.4vw,84px);line-height:1.02;letter-spacing:-.04em;font-weight:700}
+h3{font-size:clamp(21px,2vw,26px);letter-spacing:-.02em;font-weight:600;line-height:1.2}
+.lede{font-size:clamp(19px,2.1vw,26px);line-height:1.42;color:var(--muted);letter-spacing:-.012em;max-width:760px;font-weight:400}
+.lede b{color:var(--text);font-weight:600}
+.grad{background:linear-gradient(180deg,#fff 30%,#9a9aa0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.green{color:var(--accent)}
+.center{text-align:center}.center .lede{margin-inline:auto}
+
+/* pills */
+.pills{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:40px}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:16px 34px;font-size:17px;font-weight:600;letter-spacing:-.01em;border:0;cursor:pointer;font-family:inherit;transition:transform .25s ease,background .25s ease,box-shadow .25s ease}
+.pill.primary{background:var(--accent);color:#0d1400;box-shadow:0 8px 30px -8px rgba(155,188,15,.6)}
+.pill.primary:hover{background:var(--accent2);transform:translateY(-1px)}
+.pill.ghost{background:rgba(255,255,255,.08);color:var(--text);box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.pill.ghost:hover{background:rgba(255,255,255,.14);transform:translateY(-1px)}
+.pill:focus-visible{outline:3px solid var(--accent2);outline-offset:3px}
+
+/* hero */
+.hero{padding-top:clamp(72px,10vw,140px);padding-bottom:40px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto;height:900px;background:radial-gradient(50% 50% at 50% 30%,rgba(155,188,15,.16),transparent 70%);pointer-events:none}
+.hero .lede{margin-top:28px}
+.town{margin:clamp(56px,8vw,96px) auto 0;max-width:1100px;border-radius:36px;background:linear-gradient(180deg,#0e0f0c,#070707);border:1px solid var(--line);padding:clamp(16px,3vw,40px);box-shadow:0 40px 120px -40px rgba(155,188,15,.25),0 0 0 1px rgba(255,255,255,.02) inset}
+.town svg{width:100%;height:auto}
+.town .lbl{font:600 13px var(--font);fill:#8a8a90;letter-spacing:.04em;text-transform:uppercase}
+.win{fill:var(--accent);opacity:.18;animation:twinkle 6s ease-in-out infinite}
+.win:nth-child(3n){animation-delay:-2s}.win:nth-child(3n+1){animation-delay:-4s}
+@keyframes twinkle{0%,100%{opacity:.16}50%{opacity:.55}}
+
+/* steps */
+.grid{display:grid;gap:20px}
+.steps{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:72px}
+.card{background:var(--card);border-radius:var(--radius);padding:34px 30px;border:1px solid var(--line);position:relative;overflow:hidden;transition:transform .5s cubic-bezier(.2,.8,.2,1),border-color .4s}
+.card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.14)}
+.num{font-size:13px;font-weight:600;color:var(--dim);letter-spacing:.06em}
+.ico{width:52px;height:52px;border-radius:16px;background:rgba(155,188,15,.12);display:grid;place-items:center;margin:22px 0 22px;color:var(--accent)}
+.ico svg{width:26px;height:26px}
+.card p{color:var(--muted);font-size:16px;margin-top:10px;line-height:1.5}
+.card.key{background:linear-gradient(160deg,#1a2205,#141416 60%);border-color:rgba(155,188,15,.25)}
+
+/* sell */
+.alt{background:var(--bg2)}
+.drop{margin:64px auto 0;max-width:880px;border-radius:40px;border:1.5px dashed rgba(255,255,255,.18);background:var(--card);min-height:420px;display:grid;place-items:center;text-align:center;padding:48px 28px;cursor:pointer;transition:border-color .3s,background .3s,transform .3s;position:relative;overflow:hidden}
+.drop:hover,.drop.over{border-color:var(--accent);background:#161a0c}
+.drop:focus-within{border-color:var(--accent)}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.cam{width:96px;height:96px;border-radius:30px;background:var(--accent);color:#0d1400;display:grid;place-items:center;margin:0 auto 26px;box-shadow:0 20px 50px -14px rgba(155,188,15,.6)}
+.cam svg{width:44px;height:44px}
+.drop h3{font-size:clamp(26px,3vw,36px)}
+.drop p{color:var(--muted);margin-top:8px;font-size:17px}
+.preview{display:none;width:100%;max-width:640px;margin-inline:auto}
+.preview img{width:100%;max-height:440px;object-fit:contain;border-radius:24px;background:#000}
+.status{margin-top:22px;display:inline-flex;align-items:center;gap:12px;background:rgba(155,188,15,.12);color:var(--accent2);border-radius:999px;padding:12px 22px;font-weight:600;font-size:16px}
+.dots{display:inline-flex;gap:5px}.dots i{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:bob 1.2s ease-in-out infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
+.drop.has .empty{display:none}.drop.has .preview{display:block}.drop.has{border-style:solid;border-color:rgba(155,188,15,.4)}
+.again{margin-top:16px;font-size:14px;color:var(--dim)}
+.note{text-align:center;color:var(--dim);font-size:14px;margin-top:20px}
+
+/* buy */
+.deals{grid-template-columns:repeat(auto-fit,minmax(290px,1fr));margin-top:72px}
+.deal{padding:30px}
+.tag{position:absolute;top:22px;right:22px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:5px 11px}
+.thumb{height:150px;border-radius:20px;background:radial-gradient(80% 90% at 30% 20%,#23281a,#121312);display:grid;place-items:center;margin-bottom:24px;color:#5f6b3a}
+.thumb svg{width:64px;height:64px}
+.deal .loc{font-size:13px;color:var(--dim);margin-top:4px}
+.prices{display:flex;align-items:flex-end;justify-content:space-between;margin-top:24px;gap:12px}
+.ask{font-size:40px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.small{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:6px}
+.mkt{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.3);font-size:20px;font-weight:500}
+.off{display:inline-block;margin-top:20px;background:var(--accent);color:#0d1400;font-weight:700;border-radius:999px;padding:6px 14px;font-size:14px}
+.src{margin-top:20px;padding-top:18px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+.src span{display:inline-block;background:var(--card2);border-radius:999px;padding:4px 11px;margin:6px 6px 0 0;font-size:13px;color:var(--text)}
+.feats{grid-template-columns:repeat(auto-fit,minmax(240px,1fr));margin-top:28px}
+.feat{padding:28px 30px}.feat p{margin-top:6px}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:48px 0 calc(48px + env(safe-area-inset-bottom));color:var(--dim);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
+footer a{color:var(--muted)}footer a:hover{color:var(--accent)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(32px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.win,.dots i{animation:none}.card,.pill{transition:none}}
+
+/* projector / large */
+@media (min-width:1800px){.wrap{width:min(1440px,100% - 96px)}.town{max-width:1320px}}
+@media (max-width:520px){.wrap{width:calc(100% - 36px)}.pill{padding:15px 28px;flex:1 1 140px}.nav .pill.mini{flex:none;padding:7px 16px}.card{padding:28px 24px}.drop{min-height:340px;border-radius:30px}.town{border-radius:24px}.town .lbl{font-size:20px}}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main">
+  <div class="wrap">
+    <a class="brand" href="#top"><i></i>Garage Sale Town</a>
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#sell">Sell</a></li>
+      <li><a href="#buy">Buy</a></li>
+    </ul>
+    <a class="pill primary mini" href="#sell">Sell<span class="hm"> something</span></a>
+  </div>
+</nav>
+
+<main id="top">
+<section class="hero center">
+  <div class="wrap">
+    <p class="eyebrow rv">A Grok Bot Hackathon project · Austin</p>
+    <h1 class="rv d1"><span class="grad">Snap it.</span><br><span class="green">Sold.</span></h1>
+    <p class="lede rv d2">Snap a photo of anything. Grok Bots identify it, research real prices near you and across the internet, write the listing, and post it live to Facebook Marketplace <b>when you press A.</b></p>
+    <div class="pills rv d3">
+      <a class="pill primary" href="#sell">Sell</a>
+      <a class="pill ghost" href="#buy">Buy</a>
+    </div>
+
+    <div class="town rv d4" aria-label="Illustration: a small town of five buildings with bots traveling between them">
+      <svg viewBox="0 0 1000 440" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="bf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f2119"/><stop offset="1" stop-color="#131411"/></linearGradient>
+          <linearGradient id="bs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2d22"/><stop offset="1" stop-color="#1a1b16"/></linearGradient>
+          <radialGradient id="glow"><stop offset="0" stop-color="#c7e04a"/><stop offset=".4" stop-color="#9bbc0f" stop-opacity=".6"/><stop offset="1" stop-color="#9bbc0f" stop-opacity="0"/></radialGradient>
+          <path id="road" d="M110 345 H890 A22 22 0 0 1 890 389 H110 A22 22 0 0 1 110 345 Z"/>
+        </defs>
+        <g fill="none" stroke="rgba(255,255,255,.06)"><line x1="0" y1="322" x2="1000" y2="322"/></g>
+        <use href="#road" fill="none" stroke="rgba(255,255,255,.09)" stroke-width="16" stroke-linejoin="round"/>
+        <use href="#road" fill="none" stroke="rgba(155,188,15,.35)" stroke-width="1.5" stroke-dasharray="2 10" stroke-linecap="round"/>
+        <g stroke="rgba(255,255,255,.12)" stroke-width="1.2">
+          <!-- Workshop: sawtooth roof -->
+          <g transform="translate(55 0)">
+            <path d="M0 322 V200 L40 170 V200 L80 170 V200 L120 170 V322 Z" fill="url(#bf)"/>
+            <g class="w"><rect class="win" x="18" y="225" width="22" height="22" rx="4"/><rect class="win" x="58" y="225" width="22" height="22" rx="4"/><rect class="win" x="18" y="262" width="22" height="22" rx="4"/></g>
+            <rect x="62" y="270" width="36" height="52" rx="5" fill="#0c0c0a"/>
+          </g>
+          <!-- Market: awning -->
+          <g transform="translate(245 0)">
+            <rect x="0" y="180" width="130" height="142" rx="6" fill="url(#bf)"/>
+            <path d="M-8 222 H138 L130 248 H0 Z" fill="url(#bs)"/>
+            <g fill="#9bbc0f" stroke="none" opacity=".55"><path d="M10 222h16l-3 26h-13z"/><path d="M50 222h16l-1 26h-15z"/><path d="M90 222h16l2 26h-15z"/></g>
+            <g><rect class="win" x="18" y="193" width="94" height="18" rx="4"/></g>
+            <rect x="46" y="270" width="38" height="52" rx="5" fill="#0c0c0a"/>
+          </g>
+          <!-- Print shop: flat with chimney -->
+          <g transform="translate(437 0)">
+            <rect x="80" y="135" width="22" height="50" rx="3" fill="url(#bs)"/>
+            <rect x="0" y="175" width="126" height="147" rx="6" fill="url(#bf)"/>
+            <g><rect class="win" x="16" y="195" width="26" height="30" rx="4"/><rect class="win" x="50" y="195" width="26" height="30" rx="4"/><rect class="win" x="84" y="195" width="26" height="30" rx="4"/><rect class="win" x="16" y="238" width="26" height="30" rx="4"/><rect class="win" x="84" y="238" width="26" height="30" rx="4"/></g>
+            <rect x="46" y="272" width="34" height="50" rx="5" fill="#0c0c0a"/>
+          </g>
+          <!-- Town hall: pediment, columns, clock -->
+          <g transform="translate(625 0)">
+            <path d="M-6 190 L65 140 L136 190 Z" fill="url(#bs)"/>
+            <rect x="0" y="190" width="130" height="132" fill="url(#bf)"/>
+            <circle cx="65" cy="172" r="10" fill="#0c0c0a"/><path d="M65 166v6l4 3" stroke="#9bbc0f" stroke-width="1.5" fill="none"/>
+            <g fill="#25271f"><rect x="14" y="205" width="10" height="100"/><rect x="40" y="205" width="10" height="100"/><rect x="80" y="205" width="10" height="100"/><rect x="106" y="205" width="10" height="100"/></g>
+            <rect x="54" y="262" width="22" height="43" rx="3" fill="#0c0c0a"/>
+            <rect x="-6" y="305" width="142" height="17" fill="url(#bs)"/>
+          </g>
+          <!-- Marketplace: tall with pin -->
+          <g transform="translate(818 0)">
+            <rect x="0" y="120" width="124" height="202" rx="8" fill="url(#bf)"/>
+            <g><rect class="win" x="16" y="140" width="40" height="22" rx="4"/><rect class="win" x="68" y="140" width="40" height="22" rx="4"/><rect class="win" x="16" y="174" width="40" height="22" rx="4"/><rect class="win" x="68" y="174" width="40" height="22" rx="4"/><rect class="win" x="16" y="208" width="40" height="22" rx="4"/><rect class="win" x="68" y="208" width="40" height="22" rx="4"/></g>
+            <rect x="44" y="268" width="36" height="54" rx="5" fill="#0c0c0a"/>
+            <path d="M62 62c-14 0-24 10-24 23 0 17 24 33 24 33s24-16 24-33c0-13-10-23-24-23z" fill="#9bbc0f" stroke="none"/><circle cx="62" cy="85" r="8" fill="#0d1400" stroke="none"/>
+          </g>
+        </g>
+        <g class="lbl" text-anchor="middle">
+          <text x="115" y="428">Workshop</text><text x="310" y="428">Market</text><text x="500" y="428">Print Shop</text><text x="690" y="428">Town Hall</text><text x="880" y="428">Marketplace</text>
+        </g>
+        <g id="bots">
+          <g><circle r="14" fill="url(#glow)"/><circle r="5" fill="#d8ef6a"/><animateMotion dur="14s" repeatCount="indefinite" rotate="auto"><mpath href="#road"/></animateMotion></g>
+          <g><circle r="14" fill="url(#glow)"/><circle r="5" fill="#d8ef6a"/><animateMotion dur="14s" begin="-4.6s" repeatCount="indefinite"><mpath href="#road"/></animateMotion></g>
+          <g><circle r="14" fill="url(#glow)"/><circle r="5" fill="#d8ef6a"/><animateMotion dur="14s" begin="-9.3s" repeatCount="indefinite"><mpath href="#road"/></animateMotion></g>
+          <g opacity=".7"><circle r="10" fill="url(#glow)"/><circle r="3.5" fill="#fff"/><animateMotion dur="22s" begin="-3s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#road"/></animateMotion></g>
+          <g opacity=".7"><circle r="10" fill="url(#glow)"/><circle r="3.5" fill="#fff"/><animateMotion dur="22s" begin="-14s" repeatCount="indefinite" keyPoints="1;0" keyTimes="0;1" calcMode="linear"><mpath href="#road"/></animateMotion></g>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="center">
+      <p class="eyebrow rv">How selling works</p>
+      <h2 class="rv d1">Five steps.<br><span class="grad">One button.</span></h2>
+      <p class="lede rv d2" style="margin-top:24px">You take the photo and press A. The bots in town do everything in between.</p>
+    </div>
+    <div class="grid steps">
+      <article class="card rv"><span class="num">01</span><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div><h3>Snap</h3><p>Take one photo of the thing you want gone. The Workshop bot identifies exactly what it is.</p></article>
+      <article class="card rv d1"><span class="num">02</span><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg></div><h3>Research</h3><p>Local comps first. If there are fewer than 3, it widens to eBay sold, Amazon and other platforms for a true market range.</p></article>
+      <article class="card rv d2"><span class="num">03</span><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l1-4L16 5l3 3L9 18z"/><path d="M14 7l3 3"/></svg></div><h3>Write</h3><p>The Print Shop drafts a detailed listing: title, condition, specs, and a price grounded in the comps.</p></article>
+      <article class="card key rv d3"><span class="num">04</span><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><rect x="8.5" y="5" width="7" height="6" rx="1"/><circle cx="14.5" cy="16" r="1.3" fill="currentColor"/><path d="M8 16h3M9.5 14.5v3" stroke-linecap="round"/></svg></div><h3>Approve</h3><p>Review it at Town Hall and press A on a real Game Boy. Nothing posts without you.</p></article>
+      <article class="card rv d4"><span class="num">05</span><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h2M18 14h2" stroke-linecap="round"/></svg></div><h3>Live</h3><p>Posted to Facebook Marketplace. Scan the QR code to see the real listing for yourself.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="sell" class="alt">
+  <div class="wrap">
+    <div class="center">
+      <p class="eyebrow rv">Sell</p>
+      <h2 class="rv d1">Show us<br><span class="grad">what you've got.</span></h2>
+      <p class="lede rv d2" style="margin-top:24px">Drop a photo or open your camera. That's the whole form.</p>
+    </div>
+    <label class="drop rv d2" id="drop">
+      <input id="photo" type="file" accept="image/*" capture="environment" aria-label="Take or upload a photo of your item">
+      <div class="empty">
+        <div class="cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+        <h3>Snap a photo</h3>
+        <p>Tap to open your camera, or drop an image here.</p>
+      </div>
+      <div class="preview" aria-live="polite">
+        <img id="previewImg" alt="Your photo">
+        <div class="status"><span class="dots"><i></i><i></i><i></i></span><span id="statusText">The bots are on it.</span></div>
+        <p class="again">Tap to choose a different photo.</p>
+      </div>
+    </label>
+    <p class="note rv">Your photo stays on this device for now. Nothing is uploaded from this page yet.</p>
+  </div>
+</section>
+
+<section id="buy">
+  <div class="wrap">
+    <div class="center">
+      <p class="eyebrow rv">Buy</p>
+      <h2 class="rv d1">Deals find you.</h2>
+      <p class="lede rv d2" style="margin-top:24px">Scout bots watch Facebook Marketplace in Austin, compare each listing against eBay sold, Amazon and other platforms, and surface the ones priced under market, <b>with the comps to prove it.</b></p>
+    </div>
+    <div class="grid deals">
+      <article class="card deal rv"><span class="tag">Example</span>
+        <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M7 4h10l-1 9H8z"/><path d="M6 13h12M12 13v5M8 21l4-3 4 3"/></svg></div>
+        <h3>Ergonomic mesh office chair</h3><p class="loc">Example listing · Austin, TX</p>
+        <div class="prices"><div><div class="small">Asking</div><div class="ask">$350</div></div><div style="text-align:right"><div class="small">Market est.</div><div class="mkt">$780</div></div></div>
+        <span class="off">55% under market</span>
+        <div class="src">Sources compared<br><span>eBay sold</span><span>Amazon</span><span>FB Marketplace</span></div>
+      </article>
+      <article class="card deal rv d1"><span class="tag">Example</span>
+        <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><rect x="8.5" y="5" width="7" height="6" rx="1"/><circle cx="14.5" cy="16" r="1.2"/><path d="M8 16h3M9.5 14.5v3" stroke-linecap="round"/></svg></div>
+        <h3>Handheld game console, boxed</h3><p class="loc">Example listing · Austin, TX</p>
+        <div class="prices"><div><div class="small">Asking</div><div class="ask">$45</div></div><div style="text-align:right"><div class="small">Market est.</div><div class="mkt">$95</div></div></div>
+        <span class="off">53% under market</span>
+        <div class="src">Sources compared<br><span>eBay sold</span><span>Amazon</span><span>Mercari</span></div>
+      </article>
+      <article class="card deal rv d2"><span class="tag">Example</span>
+        <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><rect x="3" y="9" width="18" height="11" rx="2"/><path d="M5 9V7h14v2M9 7V5h6v2M3 13h18"/></svg></div>
+        <h3>Hard-sided 45 qt cooler</h3><p class="loc">Example listing · Austin, TX</p>
+        <div class="prices"><div><div class="small">Asking</div><div class="ask">$120</div></div><div style="text-align:right"><div class="small">Market est.</div><div class="mkt">$230</div></div></div>
+        <span class="off">48% under market</span>
+        <div class="src">Sources compared<br><span>eBay sold</span><span>Amazon</span><span>Craigslist</span></div>
+      </article>
+    </div>
+    <p class="note rv">Illustrative examples only. These are not real listings or real prices.</p>
+    <div class="grid feats">
+      <div class="card feat rv"><h3>Always watching</h3><p>Scouts check new Austin listings so you don't have to refresh.</p></div>
+      <div class="card feat rv d1"><h3>Priced against the internet</h3><p>Every deal is checked against what the item actually sells for elsewhere.</p></div>
+      <div class="card feat rv d2"><h3>Proof, not hype</h3><p>Each card shows the comps behind the market estimate.</p></div>
+    </div>
+    <div class="pills rv"><a class="pill primary" href="#sell">Start selling</a><a class="pill ghost" href="#top">Back to top</a></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Built with Grok Bot · Austin · Oct 2026</span>
+    <a href="https://github.com/adamtpang/grokbothackathon" target="_blank" rel="noopener">github.com/adamtpang/grokbothackathon</a>
+  </div>
+</footer>
+
 <script>
-document.getElementById('file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const i=document.getElementById('preview');i.src=URL.createObjectURL(f);i.style.display='inline-block';document.getElementById('msg').textContent='Got it. The bots are heading to the Workshop. Live pipeline connects here during the demo.';});
+/* Hub endpoint hook. Leave empty for client-side only.
+   When set (e.g. window.GST_HUB_URL = "https://hub.example.com"), photos are POSTed to `${GST_HUB_URL}/api/jobs`. */
+window.GST_HUB_URL = window.GST_HUB_URL || "";
+
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Scroll reveal
+  var els = document.querySelectorAll(".rv");
+  if (reduce || !("IntersectionObserver" in window)) {
+    els.forEach(function (el) { el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    els.forEach(function (el) { io.observe(el); });
+  }
+
+  // Pause town animation for reduced motion
+  var svg = document.querySelector(".town svg");
+  if (reduce && svg && svg.pauseAnimations) { svg.pauseAnimations(); }
+
+  // Photo drop zone
+  var drop = document.getElementById("drop");
+  var input = document.getElementById("photo");
+  var img = document.getElementById("previewImg");
+  var statusText = document.getElementById("statusText");
+  var lastUrl = null;
+
+  function handle(file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    if (lastUrl) URL.revokeObjectURL(lastUrl);
+    lastUrl = URL.createObjectURL(file);
+    img.src = lastUrl;
+    drop.classList.add("has");
+    statusText.textContent = "The bots are on it.";
+    sendToHub(file);
+  }
+
+  function sendToHub(file) {
+    var hub = (window.GST_HUB_URL || "").replace(/\/+$/, "");
+    if (!hub) return; // client-side only until GST_HUB_URL is set
+    var fd = new FormData();
+    fd.append("image", file, file.name || "photo.jpg");
+    fetch(hub + "/api/jobs", { method: "POST", body: fd })
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json().catch(function () { return {}; }); })
+      .then(function () { statusText.textContent = "Sent to town. The bots are on it."; })
+      .catch(function () { statusText.textContent = "Couldn't reach the hub. Your photo is still here."; });
+  }
+
+  input.addEventListener("change", function () { handle(input.files && input.files[0]); });
+  ["dragenter", "dragover"].forEach(function (t) {
+    drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add("over"); });
+  });
+  ["dragleave", "drop"].forEach(function (t) {
+    drop.addEventListener(t, function () { drop.classList.remove("over"); });
+  });
+  drop.addEventListener("drop", function (e) {
+    e.preventDefault();
+    handle(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]);
+  });
+})();
 </script>
-</body></html>
+</body>
+</html>
