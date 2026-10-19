@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Garage Sale Town | Bots that buy and sell for you</title>
+<meta name="description" content="Snap a photo. A town of Grok Bots researches the price, writes the listing, and posts it live to Facebook Marketplace.">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--d:#0f380f;--m:#306230;--l:#8bac0f;--x:#9bbc0f;--sky:#1b2a1b}
+*{box-sizing:border-box}body{margin:0;background:var(--d);color:var(--x);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+.px{font-family:'Press Start 2P',monospace}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 28px}
+header .logo{font-size:14px}header a{color:var(--l);font-size:13px;text-decoration:none}
+.hero{text-align:center;padding:48px 20px 24px}
+.hero h1{font-size:clamp(22px,5vw,46px);line-height:1.35;margin:0 0 18px;text-shadow:4px 4px 0 var(--m)}
+.hero p{font-size:clamp(15px,2.2vw,20px);max-width:680px;margin:0 auto 34px;color:#cfe8a0}
+.ctas{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:'Press Start 2P',monospace;font-size:20px;padding:22px 44px;border:4px solid var(--x);color:var(--d);background:var(--x);text-decoration:none;box-shadow:6px 6px 0 var(--m);transition:transform .08s}
+.btn:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--m)}.btn:active{transform:translate(4px,4px);box-shadow:2px 2px 0 var(--m)}
+.btn.buy{background:transparent;color:var(--x)}
+.town{position:relative;height:230px;margin:56px auto 0;max-width:1000px;border-top:4px solid var(--m);background:linear-gradient(var(--sky),var(--d))}
+.bld{position:absolute;bottom:0;width:120px;text-align:center;font-size:9px}
+.bld .roof{height:0;border-left:60px solid transparent;border-right:60px solid transparent;border-bottom:34px solid var(--m)}
+.bld .body{height:70px;background:var(--l);color:var(--d);display:flex;align-items:center;justify-content:center;padding:6px;line-height:1.5}
+.bot{position:absolute;bottom:6px;font-size:22px;animation:walk 9s linear infinite}
+@keyframes walk{0%{left:2%}50%{left:92%}50.01%{transform:scaleX(-1)}100%{left:2%;transform:scaleX(-1)}}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px;max-width:1000px;margin:56px auto;padding:0 20px}
+.card{border:3px solid var(--m);padding:20px;background:#143f14}.card h3{font-size:11px;margin:0 0 12px;color:var(--x);line-height:1.6}.card p{margin:0;color:#cfe8a0;font-size:14px;line-height:1.5}
+section{max-width:1000px;margin:0 auto;padding:30px 20px}section h2{font-size:16px;margin-bottom:16px}
+.panel{border:4px solid var(--x);padding:24px;background:#143f14}
+.drop{border:3px dashed var(--l);padding:36px;text-align:center;cursor:pointer;display:block;color:#cfe8a0}
+.drop input{display:none}#preview{max-width:240px;margin-top:14px;display:none;image-rendering:auto}
+.tag{display:inline-block;font-size:9px;padding:6px 8px;background:var(--m);color:var(--x);margin-bottom:12px}
+footer{text-align:center;padding:40px;font-size:9px;color:var(--l)}
+</style></head><body>
+<header><div class="px logo">GARAGE SALE TOWN</div><a href="https://github.com/adamtpang/grokbothackathon">GitHub</a></header>
+<div class="hero">
+<h1 class="px">A town of bots that<br>buys and sells for you</h1>
+<p>Snap a photo of anything. Grok Bots identify it, research real sold prices near you and across the internet, write the listing, and post it live to Facebook Marketplace once you press A.</p>
+<div class="ctas"><a class="btn sell" href="#sell">SELL</a><a class="btn buy" href="#buy">BUY</a></div>
+</div>
+<div class="town">
+<div class="bld px" style="left:3%"><div class="roof"></div><div class="body">WORKSHOP</div></div>
+<div class="bld px" style="left:23%"><div class="roof"></div><div class="body">MARKET</div></div>
+<div class="bld px" style="left:43%"><div class="roof"></div><div class="body">PRINT SHOP</div></div>
+<div class="bld px" style="left:63%"><div class="roof"></div><div class="body">TOWN HALL</div></div>
+<div class="bld px" style="left:83%"><div class="roof"></div><div class="body">MARKETPLACE</div></div>
+<div class="bot">🤖</div><div class="bot" style="animation-delay:-3s">🤖</div><div class="bot" style="animation-delay:-6s">🤖</div>
+</div>
+<div class="steps">
+<div class="card"><h3 class="px">1. SNAP</h3><p>Photo from a phone, the Pi camera, or the Game Boy station.</p></div>
+<div class="card"><h3 class="px">2. RESEARCH</h3><p>Local comps first. Not enough? It widens to eBay sold and Amazon for a real market range.</p></div>
+<div class="card"><h3 class="px">3. WRITE</h3><p>A detailed listing: title, price, condition, specs, and pickup details.</p></div>
+<div class="card"><h3 class="px">4. PRESS A</h3><p>You approve on the Game Boy. Grok Bot posts it live to Facebook Marketplace.</p></div>
+</div>
+<section id="sell"><h2 class="px">SELL</h2><div class="panel"><span class="tag px">LIVE DEMO TONIGHT</span>
+<label class="drop"><input id="file" type="file" accept="image/*" capture="environment"><span class="px" style="font-size:12px">TAP TO SNAP AN ITEM</span><br><br><img id="preview" alt="Your item"></label>
+<p id="msg" style="color:#cfe8a0"></p></div></section>
+<section id="buy"><h2 class="px">BUY</h2><div class="panel"><span class="tag px">SCOUT BOTS</span>
+<p style="color:#cfe8a0;line-height:1.6">Scout bots watch Austin listings around the clock and flag items priced under market, with the comps to prove it. Deal feed coming online during the demo.</p></div></section>
+<footer class="px">BUILT WITH GROK BOT · AUSTIN · OCT 2026</footer>
+<script>
+document.getElementById('file').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const i=document.getElementById('preview');i.src=URL.createObjectURL(f);i.style.display='inline-block';document.getElementById('msg').textContent='Got it. The bots are heading to the Workshop. Live pipeline connects here during the demo.';});
+</script>
+</body></html>
