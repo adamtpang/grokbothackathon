@@ -6,35 +6,38 @@ export function badge(src) {
   if (s.includes('fb') || s.includes('facebook') || s.includes('marketplace')) return ['FB', 'b-fb'];
   if (s.includes('ebay')) return ['eBay', 'b-ebay'];
   if (s.includes('amazon')) return ['Amazon', 'b-amazon'];
-  return [src || 'Web', 'b-other'];
+  if (s.includes('swappa')) return ['Swappa', 'b-other'];
+  if (s.includes('mercari')) return ['Mercari', 'b-other'];
+  if (s.includes('craigslist')) return ['Craigslist', 'b-other'];
+  if (s.includes('offerup')) return ['OfferUp', 'b-other'];
+  return [src ? 'Comps' : 'Web', 'b-other'];
 }
 export default function DealCard({ d, example }) {
   const link = d.fb_url || d.link || d.url;
   const photo = d.photo_url || d.image_url || d.image;
   const ask = d.ask_price ?? d.buy_price ?? d.price;
-  const resell = d.resell_price ?? d.est_market_price;
+  const resell = d.resale_price ?? d.resell_price ?? d.est_market_price;
   const profit = d.est_profit ?? (resell !== undefined && ask !== undefined && !isNaN(resell - ask) ? Number(resell) - Number(ask) : undefined);
   const disc = d.discount_pct ?? (resell && ask ? (1 - ask / resell) * 100 : undefined);
-  const [rb, rc] = badge(d.resell_source || d.resell_platform || '');
-  return <div className="dcard">
-    <a className="dimg" href={link || undefined} target="_blank" rel="noopener">
+  const comps = Array.isArray(d.comps) ? d.comps : [];
+  const sellUrl = d.resale_url || d.resell_url || (comps[0] && (comps[0].url || comps[0].link)) || undefined;
+  const [rb] = badge(d.resale_source || d.resell_source || d.resell_platform || (comps[0] && comps[0].source) || '');
+  const spread = profit !== undefined && !isNaN(profit) && Number(ask) > 0 ? Math.round((Number(profit) / Number(ask)) * 100) : null;
+  const href = d._href || link || undefined;
+  return <div className="dcard dc2">
+    <a className="dimg" href={href}>
       <Photo src={photo} title={d.title} fb={(d.fb_url || d.source_url || d.link || d.url)} />
       {example && <span className="extag">Example</span>}
       {disc !== undefined && !isNaN(disc) && <span className="off abs">{pct(disc)} under</span>}
     </a>
     <div className="dbody">
-      <div className="dprice">{money(ask)}{d.est_market_price !== undefined && <span className="mkt"> {money(d.est_market_price)}</span>}</div>
-      <a className="dt" href={link || undefined} target="_blank" rel="noopener">{d.title}</a>
-      {d.location && <div className="small muted">{d.location}</div>}
-      {(resell !== undefined || profit !== undefined) && <div className="arb">
-        <div><span>Buy</span><b>{money(ask)}</b></div>
-        <div><span>Resell{d.resell_source ? '' : ''}</span>{d.resell_url ? <a href={d.resell_url} target="_blank" rel="noopener"><b>{money(resell)}</b> <i className={'badge ' + rc}>{rb}</i></a> : <b>{money(resell)}</b>}</div>
-        {profit !== undefined && !isNaN(profit) && <div><span>Est. profit</span><b className="green">{money(profit)}</b></div>}
-      </div>}
-      {Array.isArray(d.comps) && d.comps.length > 0 && <div className="chips" style={{ marginTop: 8 }}>{d.comps.slice(0, 5).map((c, j) => { const [b, cl] = badge(c.source); return <a key={j} href={c.link || c.url || undefined} target="_blank" rel="noopener" className={'badge ' + cl}>{b} {money(c.price)}</a>; })}</div>}
-      {d.rationale && <p className="small muted" style={{ marginTop: 8 }}>{d.rationale}</p>}
-      {link && <a className="pill blue sm" href={link} target="_blank" rel="noopener">View on Marketplace</a>}
-      {d._href && <a className="pill gray sm" href={d._href} style={{ marginLeft: 8 }}>Deal details</a>}
+      <div className="dprice">{money(ask)}</div>
+      <a className="dt" href={href}>{d.title}</a>
+      <div className="dflip">
+        <a className="leg buyl" href={link || undefined} target="_blank" rel="noopener"><span>Buy here</span><b>FB {money(ask)}</b></a>
+        <a className="leg selll" href={sellUrl} target="_blank" rel="noopener"><span>Sell here</span><b>{resell !== undefined && resell !== null ? `${rb} ${money(resell)}` : 'Check comps'}</b></a>
+      </div>
+      {profit !== undefined && !isNaN(profit) && <em className="pchip big dpchip">+{money(profit)}{spread !== null && <small className="spct"> {spread}%</small>}</em>}
     </div>
   </div>;
 }
