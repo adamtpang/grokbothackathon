@@ -1,0 +1,40 @@
+import { saveJob, uploadImage, addLog, fireWebhook, noteWebhook, newId, now, json } from '../../../lib/store';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 30;
+
+export async function OPTIONS() {
+  return new Response(null, { headers: { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS', 'access-control-allow-headers': 'content-type,x-worker-key' } });
+}
+
+export async function POST(req) {
+  const ct = req.headers.get('content-type') || '';
+  const id = newId();
+  const job = { id, created_at: now(), stage: 'received', logs: [], results: {} };
+  try {
+    if (ct.includes('multipart/form-data')) {
+      const form = await req.formData();
+      const file = form.get('image');
+      if (!file || typeof file === 'string') return json({ error: "multipart field 'image' is required" }, 400);
+      if (file.type && !file.type.startsWith('image/')) return json({ error: 'image must be an image file' }, 400);
+      job.kind = 'sell';
+      job.image_url = await uploadImage(id, file);
+      addLog(job, 'Photo received and stored');
+    } else {
+      const body = await req.json().catch(() => null);
+      if (!body || body.kind !== 'buy' || !String(body.query || '').trim())
+        return json({ error: "send multipart 'image' for sell, or JSON {kind:'buy', query, max_price?}" }, 400);
+      job.kind = 'buy';
+      job.query = String(body.query).trim().slice(0, 200);
+      const mp = Number(body.max_price);
+      if (body.max_price !== undefined && body.max_price !== null && body.max_price !== '' && isFinite(mp)) job.max_price = mp;
+      addLog(job, `Buy request received: "${job.query}"${job.max_price ? ` under $${job.max_price}` : ''}`);
+    }
+    if (!process.env.GST_WEBHOOK_URL) addLog(job, 'Waiting for worker');
+    await saveJob(job);
+    const res = await fireWebhook(job, 'created');
+    await noteWebhook(id, 'created', res);
+    return json({ id });
+  } catch (e) {
+    return json({ error: 'failed to create job', detail: String(e.message || e) }, 500);
+  }
+}
