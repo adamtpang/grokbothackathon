@@ -243,3 +243,23 @@ a.trow:hover,.trow:hover{background:#1b1c1f}
 .realtag{position:absolute;top:6px;left:6px;font-size:10px;font-weight:800;background:var(--green);color:#04210f;border-radius:999px;padding:2px 7px}
 .gscene svg{height:clamp(190px,30vw,280px);max-height:none}
 .t .noph{padding-top:26px;font-size:12px;overflow:hidden}
+/* v6 trader */
+.trader{display:grid;grid-template-columns:auto 1.4fr repeat(3,1fr);gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:14px 18px;margin:14px 0}
+.tav{width:46px;height:46px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#7fb0ff,var(--blue));display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 0 22px rgba(8,102,255,.6)}
+.tinfo b{display:block;font-size:16px}.tinfo small{color:var(--muted);font-size:12px}
+.xp{height:8px;border-radius:99px;background:#232428;overflow:hidden;margin:6px 0 3px}.xp i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#30d158);border-radius:99px;transition:width 1s}
+.xpn{font-size:11px!important;color:var(--dim)!important}
+.tstat span{display:block;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}.tstat b{font-size:22px}.tstat small{display:block;font-size:11px;color:var(--muted)}
+.trade{padding:12px 4px;border-top:1px solid var(--line);animation:rowin .45s both}
+.trade .it{display:flex;align-items:center;gap:10px}.trade .it img,.trade .it .ph0{width:40px;height:40px;border-radius:8px;object-fit:cover;flex:none;background:#222}
+.trade .it>span{min-width:0;flex:1}.trade .it b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+.flip{display:flex;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+.leg{display:flex;flex-direction:column;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:#0c0c0e;min-width:96px;text-decoration:none;color:#fff}
+.leg span{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}.leg b{font-size:14px}
+.buyl span{color:var(--blue2)}.selll span{color:#ff9f0a}.leg:hover{border-color:var(--blue)}
+.pchip.big{font-size:16px;padding:6px 12px}.pchip.dim{background:#222;color:var(--muted)}
+.howflip{margin-top:18px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px}
+.howflip h2{font-size:20px;margin-bottom:12px}.hf{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.hf>div{background:#0c0c0e;border:1px solid var(--line);border-radius:14px;padding:14px}.hf i{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--blue);font-style:normal;font-weight:800;font-size:12px;margin-right:8px}
+.hf b{font-size:15px}.hf p{color:var(--muted);font-size:13px;margin-top:6px}.hf a{color:var(--blue2)}
+@media (max-width:760px){.trader{grid-template-columns:auto 1fr;}.trader .tstat{grid-column:span 1}.hf{grid-template-columns:1fr}.leg{min-width:0;flex:1}}

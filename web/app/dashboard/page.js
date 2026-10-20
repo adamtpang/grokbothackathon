@@ -21,13 +21,18 @@ function action(j) {
   return ['Agent working', 'dim'];
 }
 const num = (x) => (x === null || x === undefined || x === '' || isNaN(Number(x)) ? null : Number(x));
+function srcName(x) { const s = String(x || '').toLowerCase(); if (s.includes('ebay')) return 'eBay'; if (s.includes('amazon')) return 'Amazon'; if (s.includes('facebook') || s.includes('marketplace')) return 'FB'; return x ? String(x).split(/[ (,]/)[0] : 'Resale'; }
 function dealNums(d) {
+  const comps = Array.isArray(d.comps) ? d.comps : [];
   const ask = num(d.ask_price ?? d.buy_price ?? d.price);
-  const resell = num(d.resell_price ?? d.est_market_price);
-  const profit = num(d.est_profit) ?? (ask !== null && resell !== null ? resell - ask : null);
+  const resell = num(d.resale_price ?? d.resell_price ?? d.est_market_price);
+  const profit = num(d.est_profit) ?? (ask !== null && resell !== null ? Math.round((resell - ask) * 100) / 100 : null);
   let disc = num(d.discount_pct); if (disc !== null && disc > 0 && disc <= 1) disc *= 100;
   if (disc === null && ask !== null && resell) disc = (1 - ask / resell) * 100;
-  return { ask, resell, profit, disc };
+  const buyUrl = d.fb_url || d.source_url || d.link || d.url || null;
+  const sellUrl = d.resale_url || d.resell_url || (comps[0] && comps[0].url) || null;
+  const sellSrc = srcName(d.resale_source || d.resell_source || d.resell_platform || (comps[0] && comps[0].source));
+  return { ask, resell, profit, disc, buyUrl, sellUrl, sellSrc };
 }
 export default function Dashboard() {
   const [jobs, setJobs] = useState(null); const [feed, setFeed] = useState(null);
@@ -47,6 +52,10 @@ export default function Dashboard() {
   const sellTotal = sells.reduce((n, j) => n + (num(j.price) || 0), 0);
   const profitTotal = deals.filter((d) => !d._ex).reduce((n, d) => n + Math.max(0, dealNums(d).profit || 0), 0);
   const loading = jobs === null;
+  const real = deals.filter((d) => !d._ex);
+  const liveCount = sells.filter((j) => j.stage === 'live').length;
+  const xp = sells.length * 20 + liveCount * 50 + real.length * 10 + Math.round(profitTotal / 10);
+  const level = Math.floor(xp / 250) + 1, into = xp % 250;
   return <main className="wrap dash">
     <section className="mot">
       <div><p className="eyebrow">Money on the table</p><div className="motv"><Tick value={sellTotal + profitTotal} /></div>
@@ -56,6 +65,14 @@ export default function Dashboard() {
         <div><span>Deal profit</span><b className="green"><Tick value={profitTotal} /></b><small>{deals.length} deal{deals.length === 1 ? '' : 's'}</small></div>
         <div><span>Last scouted</span><b style={{ fontSize: 18 }}>{feed && feed.updated_at ? new Date(feed.updated_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Not yet'}</b><small>Austin, TX</small></div>
       </div>
+    </section>
+    <section className="trader">
+      <div className="tav">G</div>
+      <div className="tinfo"><b>Austin flipper</b><small>Level {level} trader</small>
+        <div className="xp"><i style={{ width: `${(into / 250) * 100}%` }} /></div><small className="xpn">{into} / 250 XP to level {level + 1}</small></div>
+      <div className="tstat"><span>Spread found</span><b className="green">+<Tick value={profitTotal} /></b></div>
+      <div className="tstat"><span>Buys scouted</span><b>{real.length}</b></div>
+      <div className="tstat"><span>Sells listed</span><b>{sells.length}</b><small>{liveCount} live</small></div>
     </section>
     <div className="board">
       <section className="bcol"><div className="bh"><h2>Sell</h2><a className="pill blue sm0" href="/#sell">+ Sell</a></div>
@@ -69,15 +86,23 @@ export default function Dashboard() {
           <span className={'ac ' + cls}>{a}</span></a>; })}
       </section>
       <section className="bcol"><div className="bh"><h2>Buy</h2><a className="pill gray sm0" href="/#buy">Find deals</a></div>
-        <div className="thead"><span>Deal</span><span>Buy / Resell</span><span>Profit</span><span>Action</span></div>
         {feed === null && <div className="empty">Loading...</div>}
         {feed !== null && deals.length === 0 && <div className="empty">No deals yet. Scouts post here as they find them.</div>}
-        {deals.slice(0, 30).map((d, k) => { const n = d._n; const link = d.fb_url || d.source_url || d.link || d.url; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trow" style={{ animationDelay: `${k * 50}ms` }}>
-          <span className="it">{photo ? <img src={photo} alt="" /> : <i className="ph0" />}<span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span></span>
-          <span className="rg">{$(n.ask)} <i className="arrow">→</i> {$(n.resell)}{d.resell_source ? <small> {d.resell_source}</small> : null}</span>
-          <span className="pr">{n.profit !== null ? <em className={'pchip' + (n.profit < 0 ? ' neg' : '')}>{n.profit >= 0 ? '+' : ''}{$(n.profit)}</em> : '-'}{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}</span>
-          <span className="ac go">{link ? <a href={link} target="_blank" rel="noopener">View on Marketplace</a> : d._job ? <a href={`/job/${d._job}`}>Open</a> : '-'}</span></div>; })}
+        {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade" style={{ animationDelay: `${k * 50}ms` }}>
+          <div className="it">{photo ? <img src={photo} alt="" /> : <i className="ph0" />}<span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}</div>
+          <div className="flip">
+            <a className="leg buyl" href={n.buyUrl || undefined} target="_blank" rel="noopener"><span>Buy here</span><b>FB {$(n.ask)}</b></a>
+            <i className="arrow">→</i>
+            <a className="leg selll" href={n.sellUrl || undefined} target="_blank" rel="noopener"><span>Sell here</span><b>{n.resell !== null ? `${n.sellSrc} ${$(n.resell)}` : 'Check comps'}</b></a>
+            <i className="arrow">=</i>
+            {n.profit !== null ? <em className={'pchip big' + (n.profit < 0 ? ' neg' : '')}>{n.profit >= 0 ? '+' : ''}{$(n.profit)}</em> : <em className="pchip big dim">?</em>}
+          </div></div>; })}
       </section>
     </div>
+    <section className="howflip"><h2>How to flip IRL</h2><div className="hf">
+      <div><i>1</i><b>Message the seller</b><p>Tap Buy here, say it is still available and offer the asking price or a little under.</p></div>
+      <div><i>2</i><b>Pick it up</b><p>Meet somewhere public, check it works, pay cash or with a payment app.</p></div>
+      <div><i>3</i><b>List it with Garage Sale</b><p>Snap a photo on the <a href="/#sell">Sell</a> page. Grok Bot prices it from the Sell here comps and posts it for you.</p></div>
+    </div></section>
   </main>;
 }
