@@ -85,7 +85,8 @@ async function shrink(file) {
   } catch (e) { return file; }
 }
 
-export default function Home() {
+export default function Home({ mode: initMode }) {
+  const [mode, setMode] = useState(initMode === 'buy' ? 'buy' : 'sell');
   const real = useRealTiles();
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
@@ -140,27 +141,33 @@ export default function Home() {
           <h1>Snap it. <span style={{ color: "var(--blue2)" }}>Grok Bot sells it.</span></h1>
           <p className="sub">Photo in, Facebook Marketplace listing out. You approve every step.</p>
           <div className="actions">
-            <div id="sell" className={'act drag' + (over ? ' over' : '')}
-              onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
-              onDrop={(e) => { e.preventDefault(); setOver(false); sell(e.dataTransfer.files); }}>
-              <h3>Sell</h3>
-              <div className="row">
-                <label className="pill blue big"><input type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? (prog || 'Uploading...') : 'Take photo'}</label>
-                <label className="pill gray big"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Upload photos</label>
+            <div id={mode} className={'act onebox' + (mode === 'sell' && over ? ' drag over' : mode === 'sell' ? ' drag' : '')}
+              onDragOver={(e) => { if (mode !== 'sell') return; e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
+              onDrop={(e) => { if (mode !== 'sell') return; e.preventDefault(); setOver(false); sell(e.dataTransfer.files); }}>
+              <div className="mtog" role="tablist">
+                <button type="button" role="tab" aria-selected={mode === 'buy'} className={mode === 'buy' ? 'on' : ''} onClick={() => setMode('buy')}>Buy</button>
+                <button type="button" role="tab" aria-selected={mode === 'sell'} className={mode === 'sell' ? 'on' : ''} onClick={() => setMode('sell')}>Sell</button>
               </div>
-              <div className="chips"><span className="chip0">Try: snap your headphones, a mouse, a game console</span></div>
-              <p className="hint desk-only">Many photos? Each one becomes a listing.</p>
+              {mode === 'sell' ? <>
+                <label className="bigbox sellbox"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />
+                  <span className="bbt">{busy === 'sell' ? (prog || 'Uploading...') : 'Drop photos or tap to add'}</span>
+                  <span className="bbs">Each photo becomes a listing</span></label>
+                <div className="row onerow">
+                  <label className="pill blue big"><input type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? (prog || 'Uploading...') : 'Take photo'}</label>
+                  <label className="pill gray big"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Attach photos</label>
+                </div>
+                <div className="chips">{['Headphones', 'Game console', 'Office chair', 'Old iPhone'].map((t) => <span key={t} className="chip0 hintchip">{t}</span>)}</div>
+              </> : <form onSubmit={buy}>
+                <div className="bigbox buybox">
+                  <input className="bbin" placeholder="What do you want? e.g. Herman Miller chair" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
+                  <div className="bbrow">
+                    <input className="field" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />
+                    <button className="pill blue" disabled={!!busy}>{busy === 'buy' ? 'Starting...' : 'Find deals'}</button>
+                  </div>
+                </div>
+                <div className="chips">{['Used Mac with Apple silicon under $500', 'Herman Miller chair to flip', 'Nintendo Switch under $200', 'Road bike under $300'].map((t) => <button type="button" key={t} className="chip0 btn" onClick={() => setQ(t)}>{t}</button>)}</div>
+              </form>}
             </div>
-            <form id="buy" className="act" onSubmit={buy}>
-              <h3>Buy</h3>
-              <div className="bubble desk-only"><span className="gbi sm" style={{ display: 'inline-block', verticalAlign: '-4px', marginRight: 8 }} />What do you want? I will find deals.</div>
-              <div className="buyform">
-                <input className="field" placeholder="e.g. Herman Miller chair" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
-                <input className="field" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />
-                <button className="pill blue" disabled={!!busy}>{busy === 'buy' ? 'Starting...' : 'Find deals'}</button>
-              </div>
-              <div className="chips">{['Used Mac with Apple silicon under $500', 'Herman Miller chair to flip', 'Nintendo Switch under $200', 'Road bike under $300'].map((t) => <button type="button" key={t} className="chip0 btn" onClick={() => setQ(t)}>{t}</button>)}</div>
-            </form>
             {err && <p className="err">{err}</p>}
             <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Your money, live</small></span><i>→</i></a>
           </div>

@@ -357,3 +357,19 @@ h1{letter-spacing:-.02em}
 .chips span.chip0.qchip{background:#1c1d20;border:1px solid var(--line);color:#e4e6eb;padding:5px 10px;font-size:12px}.chips span.chip0.qchip.offer{color:var(--green);border-color:rgba(48,209,88,.4)}
 .ist.new{background:#ff9f0a;color:#1a1000}
 @media(max-width:600px){.brand{font-size:0;gap:0}.brand .logo{font-size:16px}}
+/* v8 one box */
+.onebox{display:grid;gap:12px}
+.mtog{display:inline-flex;justify-self:start;background:#1c1d20;border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+.mtog button{font:700 14px var(--font);color:var(--muted);background:transparent;border:0;border-radius:999px;padding:8px 22px;cursor:pointer;transition:background .2s,color .2s}
+.mtog button.on{background:var(--blue);color:#fff}
+.bigbox{display:grid;gap:10px;background:#0c0c0e;border:1px solid var(--line);border-radius:20px;padding:16px;transition:border-color .2s}
+.bigbox:focus-within,.bigbox:hover{border-color:var(--blue)}
+.sellbox{place-items:center;text-align:center;min-height:120px;cursor:pointer;border-style:dashed;position:relative}
+.sellbox input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.onebox.over .sellbox{border-color:var(--blue);background:#0d1626}
+.bbt{font-size:18px;font-weight:700}.bbs{font-size:13px;color:var(--dim)}
+.bbin{width:100%;background:transparent;border:0;outline:0;color:#fff;font:600 19px var(--font);padding:6px 2px}
+.bbin::placeholder{color:var(--dim)}
+.bbrow{display:grid;grid-template-columns:1fr auto;gap:10px}
+.onerow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips span.chip0.hintchip{background:#1c1d20;border:1px solid var(--line);color:var(--muted);padding:6px 12px}
