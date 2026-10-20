@@ -389,3 +389,14 @@ h1{letter-spacing:-.02em}
 .abbuilt{font-size:17px;color:var(--muted)}.abbuilt a{color:var(--blue2)}
 .abteam{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.abteam a,.abteam span{background:#1c1d20;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:600;font-size:15px;color:#fff;text-decoration:none}.abteam a:hover{border-color:var(--blue)}
 @media(max-width:600px){.ab{padding:40px 0 64px}.absteps{grid-template-columns:1fr;margin-top:40px}.abstep{padding:24px 16px}}
+/* v8 Apple pass */
+:root{--font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,"Segoe UI",Helvetica,Arial,sans-serif}
+h1{font-weight:800;letter-spacing:-.03em;line-height:1.05}
+h2{letter-spacing:-.02em}
+.card,.panel,.bcol,.dcard,.mcard,.trader,.act,.howflip{box-shadow:0 1px 0 rgba(255,255,255,.03) inset,0 8px 24px rgba(0,0,0,.28)}
+.panel,.card{padding:24px}
+.sec{padding-top:64px;padding-bottom:64px}
+.jobhead{margin-bottom:24px}
+.pill{letter-spacing:-.01em}
+.sub{font-size:clamp(17px,1.6vw,20px);color:var(--muted);margin-top:16px}
+@media(max-width:600px){.panel,.card{padding:16px}.sec{padding-top:40px;padding-bottom:40px}}
