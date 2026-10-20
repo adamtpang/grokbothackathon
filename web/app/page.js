@@ -178,6 +178,24 @@ export default function Home() {
         <div className="steps" style={{ marginTop: 14 }}>
           <div className="card"><span className="tag">Buy</span><h4>Scouts find deals</h4><p>Agents scan Austin listings for what you want, compare each one against eBay sold, Amazon and others, and show the under-market ones with the comps to prove it.</p></div>
         </div>
+        <div className="about">
+          <h3>About</h3>
+          <p className="aboutline">Snap a photo of anything you own. Grok Bot prices it and posts it on Facebook Marketplace for you.</p>
+          <div className="feats">
+            <div className="card"><h4>Photo to live FB listing</h4><p>Grok Bot's computer fills every field from your account.</p></div>
+            <div className="card"><h4>Honest ID</h4><p>Confidence %, and it asks for a retake if unsure.</p></div>
+            <div className="card"><h4>Real price research</h4><p>Austin FB comps plus other platforms.</p></div>
+            <div className="card"><h4>24/7 deal scout</h4><p>Runs every 30 min. Only profitable flips, with spread %.</p></div>
+            <div className="card"><h4>Trader dashboard</h4><p>Money on the table, profit, level.</p></div>
+            <div className="card"><h4>Buyer replies drafted</h4><p>With a public pickup spot.</p></div>
+            <div className="card"><h4>You approve every step</h4><p>Nothing happens without you.</p></div>
+          </div>
+          <div className="card credits">
+            <p><b>Built at</b> <a href="https://luma.com/x0qss5av" target="_blank" rel="noreferrer">Grok Bot Hackathon</a>, Austin, TX, Oct 19, 2026</p>
+            <p><b>Team</b> <a href="https://adampang.com" target="_blank" rel="noreferrer">Adam Pang</a> (<a href="https://github.com/adamtpang" target="_blank" rel="noreferrer">GitHub</a>), Pranav, Isaac</p>
+            <p><b>Code</b> <a href="https://github.com/adamtpang/grokbothackathon" target="_blank" rel="noreferrer">github.com/adamtpang/grokbothackathon</a></p>
+          </div>
+        </div>
       </div></section>
     </main>
   );

@@ -301,3 +301,9 @@ h1{letter-spacing:-.02em}
 .etar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:700;font-size:15px}.etar small{color:var(--muted);font-weight:500;font-size:12px}
 .etab{height:6px;border-radius:99px;background:#232428;overflow:hidden;margin-top:8px}.etab i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),#5ea0ff);transition:width 1s linear}
 .spct{font-size:.7em;opacity:.8;margin-left:4px;font-weight:600}
+
+.about{margin-top:48px}.about h3{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.aboutline{font-size:clamp(19px,1.8vw,24px);font-weight:600;margin-top:10px;max-width:760px}
+.feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:22px}
+.feats .card h4{margin-top:0}
+.credits{margin-top:14px;display:grid;gap:8px}.credits p{color:var(--muted);font-size:15px}.credits b{color:#fff;margin-right:6px}.credits a{color:var(--blue2)}.credits a:hover{text-decoration:underline}
