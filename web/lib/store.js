@@ -8,13 +8,49 @@ export const validId = (id) => typeof id === 'string' && /^[a-z0-9]{6,40}$/i.tes
 export const now = () => new Date().toISOString();
 export const newId = () => crypto.randomUUID().replace(/-/g, '').slice(0, 12);
 
+export function summarize(j) {
+  const R = j.results || {};
+  const L = R.listing || {}; const P = R.price || {}; const I = R.identification || {};
+  const inq = Array.isArray(j.inquiries) ? j.inquiries : [];
+  return {
+    id: j.id, kind: j.kind, stage: j.stage, test: !!j.test, created_at: j.created_at, updated_at: j.updated_at,
+    title: j.kind === 'buy' ? j.query : (L.title || I.name || ''), image_url: j.image_url || null,
+    price: L.price ?? P.recommended ?? null, low: P.low ?? null, high: P.high ?? null, median: P.median ?? null,
+    listing_url: j.listing_url || null, question: j.question ? j.question.message : null,
+    inquiries: inq.length, inquiries_drafted: inq.filter((q) => q.status === 'drafted').length,
+    max_price: j.max_price ?? null, deals: j.kind === 'buy' && Array.isArray(R.deals) ? R.deals.slice(0, 20) : undefined,
+  };
+}
+
 export async function saveJob(job) {
   job.updated_at = now();
   const key = `${prefix(job.id)}v-${String(Date.now()).padStart(15, '0')}-${Math.random().toString(36).slice(2, 8)}.json`;
-  await put(key, JSON.stringify(job), {
-    access: 'public', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60,
-  });
+  const opts = { access: 'public', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60 };
+  await Promise.all([
+    put(key, JSON.stringify(job), opts),
+    // Lightweight index for the dashboard; never let it break a job write.
+    put(`jobs-index/${job.id}.json`, JSON.stringify(summarize(job)), opts).catch(() => null),
+  ]);
   return job;
+}
+
+export async function recentJobs(limit = 30) {
+  const ids = new Map();
+  try {
+    const { blobs } = await list({ prefix: 'jobs-index/', limit: 1000 });
+    for (const b of blobs) { const m = b.pathname.match(/^jobs-index\/([a-z0-9]+)\.json$/i); if (m) ids.set(m[1], b.uploadedAt); }
+  } catch (e) {}
+  try {
+    const { folders } = await list({ prefix: 'jobs/', mode: 'folded', limit: 1000 });
+    for (const f of folders || []) { const m = f.match(/^jobs\/([a-z0-9]+)\/$/i); if (m && !ids.has(m[1])) ids.set(m[1], 0); }
+  } catch (e) {}
+  const all = [...ids.keys()].slice(0, 120);
+  const jobs = [];
+  for (let i = 0; i < all.length; i += 20) {
+    const part = await Promise.all(all.slice(i, i + 20).map((id) => getJob(id).catch(() => null)));
+    jobs.push(...part.filter(Boolean));
+  }
+  return jobs.filter((j) => !j.test).sort((a, b) => String(b.updated_at || b.created_at).localeCompare(String(a.updated_at || a.created_at))).slice(0, limit).map(summarize);
 }
 
 export async function getJob(id) {

@@ -137,7 +137,7 @@ export default function Home() {
               </div>
             </form>
             {err && <p className="err">{err}</p>}
-            <a href="/deals" className="hint" style={{ textDecoration: 'underline' }}>See the latest scout feed on /deals</a>
+            <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Money on the table, live</small></span><i>→</i></a>
           </div>
         </div>
         <MarketViz />

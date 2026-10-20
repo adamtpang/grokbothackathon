@@ -1,9 +1,15 @@
-import { saveJob, uploadImage, addLog, fireWebhook, markPending, isTest, indexPending, newId, now, json } from '../../../lib/store';
+import { recentJobs, saveJob, uploadImage, addLog, fireWebhook, markPending, isTest, indexPending, newId, now, json } from '../../../lib/store';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
 export async function OPTIONS() {
   return new Response(null, { headers: { 'access-control-allow-origin': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS', 'access-control-allow-headers': 'content-type,x-worker-key' } });
+}
+
+export async function GET(req) {
+  const u = new URL(req.url);
+  if (u.searchParams.get('recent') !== '1') return json({ error: 'use ?recent=1' }, 400);
+  return json({ jobs: await recentJobs(30), at: now() });
 }
 
 export async function POST(req) {
