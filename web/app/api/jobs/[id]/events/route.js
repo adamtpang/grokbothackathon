@@ -34,6 +34,7 @@ export async function POST(req, { params }) {
     if (body.offer_price !== undefined && body.offer_price !== null && body.offer_price !== '' && isFinite(Number(body.offer_price))) rec.offer_price = Number(body.offer_price);
     if (body.pickup_time) rec.pickup_time = String(body.pickup_time).slice(0, 120);
     if (body.pickup_place) rec.pickup_place = String(body.pickup_place).slice(0, 160);
+    if (body.deal_stage) rec.deal_stage = String(body.deal_stage).slice(0, 40);
     if (ex) Object.assign(ex, rec); else job.inquiries.push(rec);
     addLog(job, `Buyer message from ${rec.buyer_name}${rec.status === 'new' ? '' : '; reply drafted'}`, job.stage, 'worker');
   } else if (body.type === 'inquiry_sent') {
