@@ -1,7 +1,7 @@
 export default function GarageScene() {
   return (
     <div className="gscene" aria-label="Animated illustration: Grok Bot agents pricing items at a garage sale">
-      <svg viewBox="0 0 800 260" preserveAspectRatio="xMidYMax meet" role="img">
+      <svg viewBox="0 0 800 260" preserveAspectRatio="xMidYMax slice" role="img">
         <defs>
           <linearGradient id="gs-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#0b1220" /><stop offset="1" stopColor="#050506" /></linearGradient>
           <linearGradient id="gs-door" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#1a1d24" /><stop offset="1" stopColor="#0c0d10" /></linearGradient>

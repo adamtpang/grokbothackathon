@@ -241,3 +241,5 @@ a.trow:hover,.trow:hover{background:#1b1c1f}
 .t .noph{width:100%;height:100%;display:grid;place-items:center;padding:12px;text-align:center;font-size:13px;font-weight:700;color:#cfd6e4;background:linear-gradient(135deg,#132036,#0b0c0e)}
 .t a.vom{display:block;font-size:11px;color:var(--blue2);font-weight:600;margin-top:3px}
 .realtag{position:absolute;top:6px;left:6px;font-size:10px;font-weight:800;background:var(--green);color:#04210f;border-radius:999px;padding:2px 7px}
+.gscene svg{height:clamp(190px,30vw,280px);max-height:none}
+.t .noph{padding-top:26px;font-size:12px;overflow:hidden}
