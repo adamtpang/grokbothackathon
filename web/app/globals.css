@@ -310,3 +310,5 @@ h1{letter-spacing:-.02em}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .chip0{font:500 13px var(--font);color:var(--muted);background:#1c1d20;border:1px solid var(--line);border-radius:999px;padding:7px 12px}
 .chip0.btn{cursor:pointer;color:#cfe0ff;transition:background .2s,border-color .2s}.chip0.btn:hover{background:#0d1626;border-color:var(--blue)}
+
+.tiles{grid-template-columns:repeat(3,1fr);gap:14px}@media(max-width:600px){.tiles{grid-template-columns:repeat(2,1fr)}.tiles .t:nth-child(n+7){display:none}}

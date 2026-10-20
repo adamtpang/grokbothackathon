@@ -22,7 +22,7 @@ function useRealTiles() {
       const out = [];
       try { const f = await (await fetch('/api/deals', { cache: 'no-store' })).json(); if (f && !f.test) (f.deals || []).forEach((d, i) => { if (!d.example) out.push(toTile(d, `/deal/feed/${i}`)); }); } catch (e) {}
       try { const r = await (await fetch('/api/jobs?recent=1', { cache: 'no-store' })).json(); (r.jobs || []).filter((j) => j.kind === 'buy' && j.stage === 'done').forEach((j) => (j.deals || []).forEach((d, i) => out.push(toTile(d, `/deal/${j.id}/${i}`)))); } catch (e) {}
-      if (!stop) setTiles(out.filter((x) => x.name).slice(0, 8));
+      if (!stop) setTiles(out.filter((x, i, a) => x.name && x.photo && a.findIndex((y) => y.photo === x.photo) === i).slice(0, 6));
     })();
     return () => { stop = true; };
   }, []);
@@ -165,7 +165,7 @@ export default function Home() {
             <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Money on the table, live</small></span><i>→</i></a>
           </div>
         </div>
-        {real && real.length ? <MarketViz key="real" items={real} real /> : <MarketViz key="ex" items={EXAMPLES} />}
+        {real && real.length >= 3 ? <MarketViz key="real" items={real} real /> : <MarketViz key="ex" items={EXAMPLES} />}
       </div><div className="wrap"><GarageScene /></div></section>
 
       <section id="how" className="sec"><div className="wrap">
