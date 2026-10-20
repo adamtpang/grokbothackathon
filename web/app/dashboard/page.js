@@ -90,7 +90,7 @@ export default function Dashboard() {
         {feed === null && <div className="empty">Loading...</div>}
         {feed !== null && deals.length === 0 && <div className="empty">No deals yet. Scouts post here as they find them.</div>}
         {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade tcard" style={{ animationDelay: `${k * 50}ms` }}>
-          <a className="tph" href={d._href}><Photo src={photo} title={d.title} /></a><div className="tbody">
+          <a className="tph" href={d._href}><Photo src={photo} title={d.title} fb={(d.fb_url || d.source_url || d.link || d.url)} /></a><div className="tbody">
           <a className="it" href={d._href}><span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}<i className="arrow">›</i></a>
           <div className="flip">
             <a className="leg buyl" href={n.buyUrl || undefined} target="_blank" rel="noopener"><span>Buy here</span><b>FB {$(n.ask)}</b></a>

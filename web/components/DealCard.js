@@ -18,7 +18,7 @@ export default function DealCard({ d, example }) {
   const [rb, rc] = badge(d.resell_source || d.resell_platform || '');
   return <div className="dcard">
     <a className="dimg" href={link || undefined} target="_blank" rel="noopener">
-      <Photo src={photo} title={d.title} />
+      <Photo src={photo} title={d.title} fb={(d.fb_url || d.source_url || d.link || d.url)} />
       {example && <span className="extag">Example</span>}
       {disc !== undefined && !isNaN(disc) && <span className="off abs">{pct(disc)} under</span>}
     </a>

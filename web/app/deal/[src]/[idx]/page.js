@@ -32,7 +32,7 @@ export default function Deal({ params }) {
   return <main className="wrap dealp">
     <p className="eyebrow"><a href="/dashboard">Dashboard</a> · {ctx || 'Deal'}</p>
     <div className="dhero">
-      <div className="dph"><Photo src={photo} title={d.title} /></div>
+      <div className="dph"><Photo src={photo} title={d.title} fb={(d.fb_url || d.source_url || d.link || d.url)} /></div>
       <h1>{d.title}</h1>
     </div>
     <div className="legs3">
