@@ -339,3 +339,16 @@ h1{letter-spacing:-.02em}
 }
 .chips span.chip0:not(.btn){background:transparent;border:0;padding:4px 2px;color:var(--dim);font-size:13px}
 @media(max-width:600px){.navlinks{gap:14px}.navlinks a:nth-child(4){display:inline}}
+/* v8 messages */
+.cv h1{margin-bottom:18px}
+.txs{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;margin-bottom:18px}
+.tx{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:8px 14px 8px 8px;text-decoration:none;color:#fff;max-width:300px}
+.tx:hover{border-color:var(--blue)}
+.txph{display:block;width:44px;height:44px;border-radius:12px;overflow:hidden;flex:0 0 44px;background:#111}
+.txph img,.txph .phx{width:100%;height:100%;object-fit:cover;display:grid;place-items:center;font-size:18px;aspect-ratio:auto}
+.txph .phx span{font-size:18px}
+.txb{display:flex;flex-direction:column;gap:4px;min-width:0}.txb b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.txb .chip{align-self:flex-start}
+.cvempty{border-radius:20px;padding:22px;color:var(--muted);font-size:15px}
+.cvlist{display:grid;gap:14px}.cvjob{border-radius:20px}
+.cvh{display:flex;gap:12px;align-items:center;margin-bottom:12px}.cvt{display:flex;flex-direction:column;gap:2px;min-width:0}.cvt a{color:#fff;text-decoration:none}.cvt a.small{color:var(--blue2)}
+@media(max-width:600px){.navlinks{gap:12px;font-size:13px}.navlinks a:nth-child(5){display:inline}}
