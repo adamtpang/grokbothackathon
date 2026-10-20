@@ -18,6 +18,18 @@ function badge(src) {
 }
 const pct = (v) => { const n = Number(v); if (isNaN(n)) return ''; return Math.round(n <= 1 && n > 0 ? n * 100 : n) + '%'; };
 
+function AgentScreen({ snaps, active }) {
+  const [sel, setSel] = useState(-1);
+  const i = sel >= 0 && sel < snaps.length ? sel : snaps.length - 1;
+  const cur = snaps[i];
+  return <div className={'panel snapp ' + (active ? 'o00' : 'o2b')}>
+    <h3><span className="live"><i />Grok Bot is filling in Facebook live</span> <span>{snaps.length}</span></h3>
+    <div className="shot"><img src={cur.url} alt={cur.caption || 'Agent screen'} /></div>
+    <div className="scap"><span>{cur.caption || 'Agent screen'}</span><span className="small muted">{t(cur.at)}</span></div>
+    {snaps.length > 1 && <div className="strip">{snaps.map((s, k) => <button key={s.url} className={k === i ? 'on' : ''} onClick={() => setSel(k === snaps.length - 1 ? -1 : k)} aria-label={`Snapshot ${k + 1}`}><img src={s.url} alt="" loading="lazy" /></button>)}</div>}
+  </div>;
+}
+
 function Stepper({ kind, stage }) {
   const list = STAGES[kind] || STAGES.sell;
   const i = list.indexOf(stage);
@@ -141,6 +153,7 @@ export default function JobPage({ params }) {
 
     <div className="jgrid">
       <div className="col">
+        {Array.isArray(job.snapshots) && job.snapshots.length > 0 && <AgentScreen snaps={job.snapshots} active={['approved', 'posting', 'live'].includes(job.stage)} />}
         {job.question && <div className="panel qpanel o1"><h3>Grok Bot needs a detail</h3>
           <p style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{job.question.message}</p>
           <form className="row" onSubmit={answer}><input className="field" style={{ flex: '1 1 200px' }} value={ans} onChange={(e) => setAns(e.target.value)} placeholder={job.question.field || 'Your answer'} aria-label="Answer" />

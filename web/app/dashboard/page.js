@@ -45,7 +45,7 @@ export default function Dashboard() {
     ...buyJobs.filter((b) => b.stage === 'done').flatMap((b) => (b.deals || []).map((d) => ({ ...d, _src: `For "${b.title}"`, _job: b.id }))),
   ].map((d) => ({ ...d, _n: dealNums(d) })).sort((a, b) => (b._n.profit ?? -1e9) - (a._n.profit ?? -1e9));
   const sellTotal = sells.reduce((n, j) => n + (num(j.price) || 0), 0);
-  const profitTotal = ((feed && feed.deals) || []).reduce((n, d) => n + Math.max(0, dealNums(d).profit || 0), 0);
+  const profitTotal = deals.filter((d) => !d._ex).reduce((n, d) => n + Math.max(0, dealNums(d).profit || 0), 0);
   const loading = jobs === null;
   return <main className="wrap dash">
     <section className="mot">
@@ -72,7 +72,7 @@ export default function Dashboard() {
         <div className="thead"><span>Deal</span><span>Buy / Resell</span><span>Profit</span><span>Action</span></div>
         {feed === null && <div className="empty">Loading...</div>}
         {feed !== null && deals.length === 0 && <div className="empty">No deals yet. Scouts post here as they find them.</div>}
-        {deals.slice(0, 30).map((d, k) => { const n = d._n; const link = d.fb_url || d.link || d.url; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trow" style={{ animationDelay: `${k * 50}ms` }}>
+        {deals.slice(0, 30).map((d, k) => { const n = d._n; const link = d.fb_url || d.source_url || d.link || d.url; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trow" style={{ animationDelay: `${k * 50}ms` }}>
           <span className="it">{photo ? <img src={photo} alt="" /> : <i className="ph0" />}<span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span></span>
           <span className="rg">{$(n.ask)} <i className="arrow">→</i> {$(n.resell)}{d.resell_source ? <small> {d.resell_source}</small> : null}</span>
           <span className="pr">{n.profit !== null ? <em className={'pchip' + (n.profit < 0 ? ' neg' : '')}>{n.profit >= 0 ? '+' : ''}{$(n.profit)}</em> : '-'}{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}</span>

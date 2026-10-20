@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import GarageScene from '../components/GarageScene';
 
 const TILES = [
   ['chair', 'Ergonomic office chair', 140, 260], ['airpods', 'AirPods Pro', 95, 160], ['lamp', 'Desk lamp', 15, 30], ['guitar', 'Acoustic guitar', 120, 210],
@@ -7,9 +8,29 @@ const TILES = [
 ];
 const FEED = ['Scanning new Austin listings', 'Comparing with eBay sold', 'Checking Amazon price', 'Found 3 local comps', 'Flagged under-market listing', 'Drafting listing copy'];
 
-function MarketViz() {
+const EXAMPLES = TILES.map(([ic, nm, ask, mkt]) => ({ photo: `/items/${ic}.jpg`, name: nm, ask, mkt }));
+const r0 = (v) => (v === undefined || v === null || isNaN(Number(v)) ? undefined : Math.round(Number(v)));
+function toTile(d) {
+  return { photo: d.photo_url || d.image_url || d.image || null, name: d.title || 'Deal', ask: r0(d.ask_price ?? d.buy_price ?? d.price), mkt: r0(d.resell_price ?? d.est_market_price), link: d.fb_url || d.source_url || d.link || d.url || null };
+}
+function useRealTiles() {
+  const [tiles, setTiles] = useState(null);
+  useEffect(() => {
+    let stop = false;
+    (async () => {
+      const out = [];
+      try { const f = await (await fetch('/api/deals', { cache: 'no-store' })).json(); if (f && !f.test) (f.deals || []).filter((d) => !d.example).forEach((d) => out.push(toTile(d))); } catch (e) {}
+      try { const r = await (await fetch('/api/jobs?recent=1', { cache: 'no-store' })).json(); (r.jobs || []).filter((j) => j.kind === 'buy' && j.stage === 'done').forEach((j) => (j.deals || []).forEach((d) => out.push(toTile(d)))); } catch (e) {}
+      if (!stop) setTiles(out.filter((x) => x.name).slice(0, 8));
+    })();
+    return () => { stop = true; };
+  }, []);
+  return tiles;
+}
+
+function MarketViz({ items, real }) {
   const box = useRef(null);
-  const [scan, setScan] = useState([0, 5, 10]);
+  const [scan, setScan] = useState(items.length > 3 ? [0, 5, 2] : items.map((_, i) => i).slice(0, Math.max(1, items.length - 1)));
   const [pos, setPos] = useState([]);
   const [tick, setTick] = useState(0);
   useEffect(() => {
@@ -24,7 +45,7 @@ function MarketViz() {
     let cur = scan;
     const id = setInterval(() => {
       const visible = [...box.current.querySelectorAll('.t')].map((t, i) => (t.offsetParent ? i : -1)).filter((i) => i >= 0);
-      cur = cur.map((c, k) => { let n; do { n = visible[Math.floor(Math.random() * visible.length)]; } while (cur.includes(n)); return n; });
+      cur = cur.map((c, k) => { const opts = visible.filter((v) => !cur.includes(v)); const pool = opts.length ? opts : visible; return pool[Math.floor(Math.random() * pool.length)]; });
       setScan(cur); place(cur); setTick((x) => x + 1);
     }, 1900);
     const onR = () => place(cur);
@@ -33,21 +54,21 @@ function MarketViz() {
   }, []);
   return (
     <div className="viz" aria-label="Illustration of AI agents scanning Marketplace listings">
-      <div className="vizbar"><span className="live"><i />Grok Bot agents scanning Marketplace</span><span>Austin, TX</span></div>
+      <div className="vizbar"><span className="live"><i />{real ? 'Deals Grok Bot found on Marketplace' : 'Grok Bot agents scanning Marketplace'}</span><span>Austin, TX</span></div>
       <div className="tiles" ref={box}>
-        {TILES.map(([ic, nm, ask, mkt], i) => (
+        {items.map((it, i) => (
           <div key={i} className={'t' + (scan.includes(i) ? ' scan' : '')}>
-            <div className="ph">
-              <img src={`/items/${ic}.jpg`} alt={nm} loading={i < 4 ? 'eager' : 'lazy'} />
-              <span className="extag">Example</span>
-              <div className="cmp">${ask} vs <b>${mkt}</b> market</div>
-            </div>
-            <div className="meta"><div className="pr">${ask}</div><div className="nm">{nm}</div></div>
+            <a className="ph" href={it.link || undefined} target={it.link ? '_blank' : undefined} rel="noopener">
+              {it.photo ? <img src={it.photo} alt={it.name} loading={i < 4 ? 'eager' : 'lazy'} /> : <div className="noph">{it.name}</div>}
+              {real ? <span className="realtag">Real</span> : <span className="extag">Example</span>}
+              {it.mkt ? <div className="cmp">${it.ask} vs <b>${it.mkt}</b> market</div> : null}
+            </a>
+            <div className="meta"><div className="pr">{it.ask !== undefined && it.ask !== null ? '$' + it.ask : ''}</div><div className="nm">{it.name}</div>{it.link && <a className="vom" href={it.link} target="_blank" rel="noopener">View on Marketplace</a>}</div>
           </div>
         ))}
         {pos.map((p, k) => p && <div key={k} className="agent" style={p}>{['G', 'R', 'K'][k]}</div>)}
       </div>
-      <div className="vizfoot"><span className="cursor" /> {FEED[tick % FEED.length]}... <span style={{ float: 'right' }}>Example items and prices, not live listings</span></div>
+      <div className="vizfoot"><span className="cursor" /> {FEED[tick % FEED.length]}... <span style={{ float: 'right' }}>{real ? 'Real deals found by Grok Bot scouts' : 'Example items and prices, not live listings'}</span></div>
     </div>
   );
 }
@@ -64,6 +85,7 @@ async function shrink(file) {
 }
 
 export default function Home() {
+  const real = useRealTiles();
   const [busy, setBusy] = useState('');
   const [err, setErr] = useState('');
   const [over, setOver] = useState(false);
@@ -140,8 +162,8 @@ export default function Home() {
             <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Money on the table, live</small></span><i>→</i></a>
           </div>
         </div>
-        <MarketViz />
-      </div></section>
+        {real && real.length ? <MarketViz key="real" items={real} real /> : <MarketViz key="ex" items={EXAMPLES} />}
+      </div><div className="wrap"><GarageScene /></div></section>
 
       <section id="how" className="sec"><div className="wrap">
         <h2>How it works</h2>
