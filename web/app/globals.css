@@ -179,3 +179,4 @@ h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.035em;line-height:1.05;font-w
 .prow{grid-template-columns:1fr}
 body:has(.has-sticky) .fab{bottom:calc(96px + env(safe-area-inset-bottom))}
 .term{height:260px}.foot{margin-top:40px}}
+@media(max-width:1000px){.jgrid{align-items:stretch}.o0b{order:8}.o4{order:9}.o9{order:10}.qpanel{order:0}}
