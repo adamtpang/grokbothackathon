@@ -402,3 +402,4 @@ h2{letter-spacing:-.02em}
 @media(max-width:600px){.panel,.card{padding:16px}.sec{padding-top:40px;padding-bottom:40px}}
 .onebox{grid-template-columns:minmax(0,1fr)}.onebox>*{min-width:0}.onerow>.pill{min-width:0;padding-inline:12px;white-space:nowrap}.hgrid>div{min-width:0}@media(max-width:600px){.onerow>.pill{font-size:16px}.sub{font-size:16px}}
 .cv{padding-top:48px;padding-bottom:64px}
+.inq.inqhl{box-shadow:0 0 0 2px var(--blue),0 0 24px rgba(8,102,255,.45);transition:box-shadow .4s}.ist.sending{background:#0d1626;color:var(--blue2)}

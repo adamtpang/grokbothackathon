@@ -4,9 +4,10 @@ import Photo from '../../components/Photo';
 const LABEL = { drafting: 'Drafting', writing: 'Drafting', awaiting_approval: 'Your approval', approved: 'Approved', posting: 'Posting', live: 'Live' };
 const ago = (ts) => { if (!ts) return ''; const s = Math.round((Date.now() - new Date(ts)) / 1000); if (s < 60) return 'just now'; if (s < 3600) return `${Math.round(s / 60)} min ago`; if (s < 86400) return `${Math.round(s / 3600)} h ago`; return new Date(ts).toLocaleDateString(); };
 export default function Conversations() {
-  const [jobs, setJobs] = useState(null); const [full, setFull] = useState({}); const [drafts, setDrafts] = useState({}); const [sending, setSending] = useState(''); const [err, setErr] = useState('');
+  const [jobs, setJobs] = useState(null); const [full, setFull] = useState({}); const [drafts, setDrafts] = useState({}); const [sending, setSending] = useState(''); const [err, setErr] = useState(''); const [hl, setHl] = useState('');
   useEffect(() => {
     let alive = true;
+    try { const h = new URLSearchParams(location.search).get('hl'); if (h) { setHl(h); setTimeout(() => alive && setHl(''), 4000); } } catch (e) {}
     const load = async () => {
       try {
         const j = await (await fetch('/api/jobs?recent=1', { cache: 'no-store' })).json();
@@ -23,7 +24,7 @@ export default function Conversations() {
     setSending(q.id); setErr('');
     try {
       const r = await fetch(`/api/jobs/${jobId}/replies/${encodeURIComponent(q.id)}/approve`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text: drafts[q.id] ?? q.draft_reply }) });
-      const j = await r.json(); if (r.ok && j && j.id) setFull((f) => ({ ...f, [j.id]: j })); else setErr((j && j.error) || 'Request failed');
+      const j = await r.json(); if (r.ok && j && j.id) { setFull((f) => ({ ...f, [j.id]: j })); setHl(q.id); setTimeout(() => setHl(''), 4000); } else setErr((j && j.error) || 'Request failed');
     } catch (e) { setErr('Request failed'); }
     setSending('');
   }
@@ -41,8 +42,8 @@ export default function Conversations() {
       <div className="cvlist">{threads.map(({ j, f, inqs }) => <section key={j.id} className="card cvjob">
         <div className="cvh"><a className="txph" href={`/job/${j.id}`}><Photo src={j.image_url} title={j.title} /></a>
           <div className="cvt"><a href={`/job/${j.id}`}><b>{j.title || 'Item'}</b></a>{j.listing_url && <a className="small" href={j.listing_url} target="_blank" rel="noopener">View listing</a>}</div></div>
-        <div className="inqs">{inqs.map((q) => <div key={q.id} className="inq">
-          <div className="inqh"><b>{q.buyer_name || 'Buyer'} <small className="muted">{q.sent_at ? 'replied ' + ago(q.sent_at) : ''}</small></b><span className={'ist ' + q.status}>{q.status === 'new' ? 'New' : q.status === 'drafted' ? 'Drafted, awaiting approval' : 'Sent'}</span></div>
+        <div className="inqs">{inqs.map((q) => <div key={q.id} id={'inq-' + q.id} className={'inq' + (hl === q.id ? ' inqhl' : '')}>
+          <div className="inqh"><b>{q.buyer_name || 'Buyer'} <small className="muted">{q.sent_at ? 'replied ' + ago(q.sent_at) : ''}</small></b><span className={'ist ' + q.status}>{q.status === 'new' ? 'New' : q.status === 'drafted' ? 'Drafted, awaiting approval' : q.status === 'sending' ? 'Sending...' : 'Sent'}</span></div>
           <div className="small muted">{j.title || 'Item'} · received {ago(q.ts)}</div>
           <div className="bmsg">{q.message}</div>
           {(q.intent || q.offer_price !== undefined || q.pickup_time || q.pickup_place) && <div className="chips" style={{ marginTop: 0 }}>
@@ -51,7 +52,7 @@ export default function Conversations() {
             {q.pickup_time && <span className="chip0 qchip">{q.pickup_time}</span>}
             {q.pickup_place && <span className="chip0 qchip">{q.pickup_place}</span>}
           </div>}
-          {q.status !== 'sent' ? <>
+          {q.status === 'drafted' ? <>
             <textarea className="field ta" rows={3} value={drafts[q.id] ?? q.draft_reply ?? ''} onChange={(e) => setDrafts({ ...drafts, [q.id]: e.target.value })} aria-label="Reply" />
             <button className="pill blue sm" onClick={() => sendReply(j.id, q)} disabled={sending === q.id}>{sending === q.id ? 'Sending...' : 'Approve & send'}</button>
           </> : <div className="rmsg">{q.approved_text || q.draft_reply}</div>}

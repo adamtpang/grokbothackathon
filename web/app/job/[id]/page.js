@@ -119,7 +119,7 @@ export default function JobPage({ params }) {
     const j = await r.json(); if (r.ok) setJob(j); else setErr(j.error || 'Request failed'); return r.ok;
   }
   async function answer(e) { e.preventDefault(); if (!ans.trim()) return; setSending('answer'); if (await post(`/api/jobs/${id}/answer`, { answer: ans.trim() })) setAns(''); setSending(''); }
-  async function sendReply(q) { setSending(q.id); await post(`/api/jobs/${id}/replies/${encodeURIComponent(q.id)}/approve`, { text: drafts[q.id] ?? q.draft_reply }); setSending(''); }
+  async function sendReply(q) { setSending(q.id); const ok = await post(`/api/jobs/${id}/replies/${encodeURIComponent(q.id)}/approve`, { text: drafts[q.id] ?? q.draft_reply }); if (ok) { location.href = `/conversations?hl=${encodeURIComponent(q.id)}`; return; } setSending(''); }
 
   useEffect(() => {
     let stop = false;
