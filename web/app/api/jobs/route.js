@@ -9,7 +9,7 @@ export async function OPTIONS() {
 export async function GET(req) {
   const u = new URL(req.url);
   if (u.searchParams.get('recent') !== '1') return json({ error: 'use ?recent=1' }, 400);
-  return json({ jobs: await recentJobs(30), at: now() });
+  return json({ jobs: await recentJobs(15), at: now() });
 }
 
 export async function POST(req) {

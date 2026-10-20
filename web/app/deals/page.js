@@ -6,7 +6,7 @@ export default function Deals() {
   const [f, setF] = useState(null); const [, setT] = useState(0);
   useEffect(() => {
     const load = async () => { try { const r = await fetch('/api/deals', { cache: 'no-store' }); setF(await r.json()); } catch (e) {} };
-    load(); const a = setInterval(load, 15000), b = setInterval(() => setT((x) => x + 1), 5000);
+    load(); const a = setInterval(load, 30000), b = setInterval(() => setT((x) => x + 1), 5000);
     return () => { clearInterval(a); clearInterval(b); };
   }, []);
   const deals = f && Array.isArray(f.deals) ? f.deals.map((d, i) => ({ ...d, _href: `/deal/feed/${i}` })).filter((d) => { const a = Number(d.ask_price ?? d.buy_price ?? d.price); const r = Number(d.resale_price ?? d.resell_price ?? d.est_market_price); const p = d.est_profit !== undefined && d.est_profit !== null && d.est_profit !== '' ? Number(d.est_profit) : r - a; return isFinite(p) && p > 0; }).sort((a, b) => Number(b.discount_pct || 0) - Number(a.discount_pct || 0)) : [];

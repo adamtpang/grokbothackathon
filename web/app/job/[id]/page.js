@@ -130,7 +130,7 @@ export default function JobPage({ params }) {
       } catch (e) { if (!stop) setErr('Reconnecting...'); }
     };
     load();
-    const a = setInterval(load, 1500), b = setInterval(() => setTick(Date.now()), 5000);
+    const a = setInterval(load, 5000), b = setInterval(() => setTick(Date.now()), 5000);
     return () => { stop = true; clearInterval(a); clearInterval(b); };
   }, [id]);
 

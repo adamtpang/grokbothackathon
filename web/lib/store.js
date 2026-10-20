@@ -42,23 +42,20 @@ function isStale(j) {
   if (!(age > 15 * 60 * 1000)) return false;
   return !(Array.isArray(j.logs) && j.logs.some((l) => l && l.source === 'worker'));
 }
-export async function recentJobs(limit = 30) {
-  const ids = new Map();
-  try {
-    const { blobs } = await list({ prefix: 'jobs-index/', limit: 1000 });
-    for (const b of blobs) { const m = b.pathname.match(/^jobs-index\/([a-z0-9]+)\.json$/i); if (m) ids.set(m[1], b.uploadedAt); }
-  } catch (e) {}
-  try {
-    const { folders } = await list({ prefix: 'jobs/', mode: 'folded', limit: 1000 });
-    for (const f of folders || []) { const m = f.match(/^jobs\/([a-z0-9]+)\/$/i); if (m && !ids.has(m[1])) ids.set(m[1], 0); }
-  } catch (e) {}
-  const all = [...ids.keys()].slice(0, 120);
-  const jobs = [];
-  for (let i = 0; i < all.length; i += 20) {
-    const part = await Promise.all(all.slice(i, i + 20).map((id) => getJob(id).catch(() => null)));
-    jobs.push(...part.filter(Boolean));
-  }
-  return jobs.filter((j) => !j.test && !isStale(j)).map(summarize).filter((s) => !/^test\b/i.test(String(s.title || ''))).sort((a, b) => String(b.updated_at || b.created_at).localeCompare(String(a.updated_at || a.created_at))).slice(0, limit);
+// Cheap feed: one list() of the lightweight index, then fetch only the newest summaries.
+// No per-job version listing (that was the main source of Blob list calls).
+export async function recentJobs(limit = 15) {
+  limit = Math.min(limit, 15);
+  let blobs = [];
+  try { ({ blobs } = await list({ prefix: 'jobs-index/', limit: 1000 })); } catch (e) { return []; }
+  const top = blobs
+    .filter((b) => /^jobs-index\/[a-z0-9]+\.json$/i.test(b.pathname) && !HIDE.has(b.pathname.slice(11, -5)))
+    .sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt))
+    .slice(0, limit + 10);
+  const sums = (await Promise.all(top.map(async (b) => {
+    try { const r = await fetch(b.url, { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch (e) { return null; }
+  }))).filter(Boolean);
+  return sums.filter((j) => !j.test && !isStale(j)).filter((s) => !/^test\b/i.test(String(s.title || ''))).sort((a, b) => String(b.updated_at || b.created_at).localeCompare(String(a.updated_at || a.created_at))).slice(0, limit);
 }
 
 export async function getJob(id) {

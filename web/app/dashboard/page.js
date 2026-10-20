@@ -42,7 +42,7 @@ export default function Dashboard() {
       try { const r = await fetch('/api/jobs?recent=1', { cache: 'no-store' }); const j = await r.json(); if (j.jobs) setJobs(j.jobs); } catch (e) {}
       try { const r = await fetch('/api/deals', { cache: 'no-store' }); setFeed(await r.json()); } catch (e) {}
     };
-    load(); const t = setInterval(load, 8000); return () => clearInterval(t);
+    load(); const t = setInterval(load, 30000); return () => clearInterval(t);
   }, []);
   const sells = (jobs || []).filter((j) => j.kind === 'sell');
   const buyJobs = (jobs || []).filter((j) => j.kind === 'buy');
