@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import DealCard from '../../../components/DealCard';
+import Photo, { prox } from '../../../components/Photo';
 
 const STAGES = {
   sell: ['received', 'identifying', 'researching', 'writing', 'awaiting_approval', 'approved', 'posting', 'live'],
@@ -90,7 +91,7 @@ function Price({ p }) {
 function Listing({ l, img }) {
   const tags = Array.isArray(l.tags) ? l.tags : typeof l.tags === 'string' ? l.tags.split(',') : [];
   return <div className="mp">
-    {img && <img src={img} alt="" />}
+    {img && <img src={prox(img)} alt="" onError={(e) => { e.currentTarget.style.display = 'none'; }} />}
     <div className="bd">
       <h2>{l.title}</h2><div className="mpp">{money(l.price)}</div>
       <div className="sm">Listed just now in Austin, TX</div>
@@ -227,7 +228,7 @@ export default function JobPage({ params }) {
         </div></div>}
       </div>
       <div className="col">
-        {job.image_url && <div className="panel o1a"><h3>Photo</h3><img className="photo" src={job.image_url} alt="Item photo" /></div>}
+        {job.image_url && <div className="panel o1a"><h3>Photo</h3><Photo className="photo" src={job.image_url} title={job.title || 'Item photo'} /></div>}
         {idf && <div className="panel o1b"><h3>Identified</h3><dl className="kv">
           {['name', 'brand', 'model', 'condition'].map((k) => idf[k] ? [<dt key={k + 't'}>{k[0].toUpperCase() + k.slice(1)}</dt>, <dd key={k}>{String(idf[k])}</dd>] : null)}
           {idf.details && <><dt>Details</dt><dd>{typeof idf.details === 'string' ? idf.details : Array.isArray(idf.details) ? idf.details.join(', ') : JSON.stringify(idf.details)}</dd></>}

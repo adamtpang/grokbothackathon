@@ -307,3 +307,6 @@ h1{letter-spacing:-.02em}
 .feats{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:22px}
 .feats .card h4{margin-top:0}
 .credits{margin-top:14px;display:grid;gap:8px}.credits p{color:var(--muted);font-size:15px}.credits b{color:#fff;margin-right:6px}.credits a{color:var(--blue2)}.credits a:hover{text-decoration:underline}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip0{font:500 13px var(--font);color:var(--muted);background:#1c1d20;border:1px solid var(--line);border-radius:999px;padding:7px 12px}
+.chip0.btn{cursor:pointer;color:#cfe0ff;transition:background .2s,border-color .2s}.chip0.btn:hover{background:#0d1626;border-color:var(--blue)}

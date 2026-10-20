@@ -148,6 +148,7 @@ export default function Home() {
                 <label className="pill blue big"><input type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? (prog || 'Uploading...') : 'Take photo'}</label>
                 <label className="pill gray big"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Upload photos</label>
               </div>
+              <div className="chips"><span className="chip0">Try: snap your headphones, a mouse, a game console</span></div>
               <p className="hint desk-only">Moving out? Pick many photos at once and each one becomes its own listing. On desktop you can drop images here.</p>
             </div>
             <form id="buy" className="act" onSubmit={buy}>
@@ -158,6 +159,7 @@ export default function Home() {
                 <input className="field" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />
                 <button className="pill blue" disabled={!!busy}>{busy === 'buy' ? 'Starting...' : 'Find deals'}</button>
               </div>
+              <div className="chips">{['Used Mac with Apple silicon under $500', 'Herman Miller chair to flip', 'Nintendo Switch under $200', 'Road bike under $300'].map((t) => <button type="button" key={t} className="chip0 btn" onClick={() => setQ(t)}>{t}</button>)}</div>
             </form>
             {err && <p className="err">{err}</p>}
             <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Money on the table, live</small></span><i>→</i></a>
@@ -191,7 +193,8 @@ export default function Home() {
             <div className="card"><h4>You approve every step</h4><p>Nothing happens without you.</p></div>
           </div>
           <div className="card credits">
-            <p><b>Built at</b> <a href="https://luma.com/x0qss5av" target="_blank" rel="noreferrer">Grok Bot Hackathon</a>, Austin, TX, Oct 19, 2026</p>
+            <p><b>Built in 2.5 hours with Grok Bot.</b></p>
+            <p><b>Built at</b> <a href="https://luma.com/x0qss5av?tk=Mdaf1N" target="_blank" rel="noreferrer">Grok Bot Hackathon</a>, Austin, TX, Oct 19, 2026</p>
             <p><b>Team</b> <a href="https://adampang.com" target="_blank" rel="noreferrer">Adam Pang</a> (<a href="https://github.com/adamtpang" target="_blank" rel="noreferrer">GitHub</a>), Pranav, Isaac</p>
             <p><b>Code</b> <a href="https://github.com/adamtpang/grokbothackathon" target="_blank" rel="noreferrer">github.com/adamtpang/grokbothackathon</a></p>
           </div>
