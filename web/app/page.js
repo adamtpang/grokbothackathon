@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import GarageScene from '../components/GarageScene';
 import Photo, { prox } from '../components/Photo';
+import ModeFeed from '../components/ModeFeed';
 
 const TILES = [
   ['chair', 'Ergonomic office chair', 140, 260], ['airpods', 'AirPods Pro', 95, 160], ['lamp', 'Desk lamp', 15, 30], ['guitar', 'Acoustic guitar', 120, 210],
@@ -137,9 +138,11 @@ export default function Home({ mode: initMode }) {
     <main>
       <section className="hero"><div className="wrap hgrid">
         <div>
+          {initMode ? <><h1>{initMode === 'sell' ? 'Sell anything.' : 'Find flips.'}</h1>
+          <p className="sub">{initMode === 'sell' ? 'One photo. Grok Bot writes and posts the listing.' : 'Say what you want. Grok Bot finds it under market.'}</p></> : <>
           <p className="eyebrow desk-only">Garage Sale · Grok Bot Hackathon · Austin</p>
           <h1>Snap it. <span style={{ color: "var(--blue2)" }}>Grok Bot sells it.</span></h1>
-          <p className="sub">Photo in, Facebook Marketplace listing out. You approve every step.</p>
+          <p className="sub">Photo in, Facebook Marketplace listing out. You approve every step.</p></>}
           <div className="actions">
             <div id={mode} className={'act onebox' + (mode === 'sell' && over ? ' drag over' : mode === 'sell' ? ' drag' : '')}
               onDragOver={(e) => { if (mode !== 'sell') return; e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
@@ -172,10 +175,11 @@ export default function Home({ mode: initMode }) {
             <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Your money, live</small></span><i>→</i></a>
           </div>
         </div>
-        {real && real.length >= 3 ? <MarketViz key="real" items={real} real /> : <MarketViz key="ex" items={EXAMPLES} />}
-      </div><div className="wrap"><GarageScene /></div></section>
+        {!initMode && (real && real.length >= 3 ? <MarketViz key="real" items={real} real /> : <MarketViz key="ex" items={EXAMPLES} />)}
+      </div>{!initMode && <div className="wrap"><GarageScene /></div>}</section>
+      {initMode && <ModeFeed mode={initMode} />}
 
-      <section id="how" className="sec"><div className="wrap">
+      {!initMode && <section id="how" className="sec"><div className="wrap">
         <h2>How it works</h2>
         <div className="steps">
           <div className="card"><div className="n">1</div><h4>Identify</h4><p>What is it?</p></div>
@@ -206,7 +210,7 @@ export default function Home({ mode: initMode }) {
             <p><b>Code</b> <a href="https://github.com/adamtpang/grokbothackathon" target="_blank" rel="noreferrer">github.com/adamtpang/grokbothackathon</a></p>
           </div>
         </div>
-      </div></section>
+      </div></section>}
     </main>
   );
 }
