@@ -46,8 +46,8 @@ export default function Dashboard() {
   const sells = (jobs || []).filter((j) => j.kind === 'sell');
   const buyJobs = (jobs || []).filter((j) => j.kind === 'buy');
   const deals = [
-    ...((feed && feed.deals) || []).map((d) => ({ ...d, _src: 'Scout feed', _ex: !!(feed.test || d.example) })),
-    ...buyJobs.filter((b) => b.stage === 'done').flatMap((b) => (b.deals || []).map((d) => ({ ...d, _src: `For "${b.title}"`, _job: b.id }))),
+    ...((feed && feed.deals) || []).map((d, i) => ({ ...d, _src: 'Scout feed', _ex: !!(feed.test || d.example), _href: `/deal/feed/${i}` })),
+    ...buyJobs.filter((b) => b.stage === 'done').flatMap((b) => (b.deals || []).map((d, i) => ({ ...d, _src: `For "${b.title}"`, _job: b.id, _href: `/deal/${b.id}/${i}` }))),
   ].map((d) => ({ ...d, _n: dealNums(d) })).sort((a, b) => (b._n.profit ?? -1e9) - (a._n.profit ?? -1e9));
   const sellTotal = sells.reduce((n, j) => n + (num(j.price) || 0), 0);
   const profitTotal = deals.filter((d) => !d._ex).reduce((n, d) => n + Math.max(0, dealNums(d).profit || 0), 0);
@@ -89,7 +89,7 @@ export default function Dashboard() {
         {feed === null && <div className="empty">Loading...</div>}
         {feed !== null && deals.length === 0 && <div className="empty">No deals yet. Scouts post here as they find them.</div>}
         {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade" style={{ animationDelay: `${k * 50}ms` }}>
-          <div className="it">{photo ? <img src={photo} alt="" /> : <i className="ph0" />}<span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}</div>
+          <a className="it" href={d._href}>{photo ? <img src={photo} alt="" /> : <i className="ph0" />}<span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}<i className="arrow">›</i></a>
           <div className="flip">
             <a className="leg buyl" href={n.buyUrl || undefined} target="_blank" rel="noopener"><span>Buy here</span><b>FB {$(n.ask)}</b></a>
             <i className="arrow">→</i>

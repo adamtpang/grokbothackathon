@@ -10,8 +10,8 @@ const FEED = ['Scanning new Austin listings', 'Comparing with eBay sold', 'Check
 
 const EXAMPLES = TILES.map(([ic, nm, ask, mkt]) => ({ photo: `/items/${ic}.jpg`, name: nm, ask, mkt }));
 const r0 = (v) => (v === undefined || v === null || isNaN(Number(v)) ? undefined : Math.round(Number(v)));
-function toTile(d) {
-  return { photo: d.photo_url || d.image_url || d.image || null, name: d.title || 'Deal', ask: r0(d.ask_price ?? d.buy_price ?? d.price), mkt: r0(d.resale_price ?? d.resell_price ?? d.est_market_price), link: d.fb_url || d.source_url || d.link || d.url || null };
+function toTile(d, href) {
+  return { href, photo: d.photo_url || d.image_url || d.image || null, name: d.title || 'Deal', ask: r0(d.ask_price ?? d.buy_price ?? d.price), mkt: r0(d.resale_price ?? d.resell_price ?? d.est_market_price), link: d.fb_url || d.source_url || d.link || d.url || null };
 }
 function useRealTiles() {
   const [tiles, setTiles] = useState(null);
@@ -19,8 +19,8 @@ function useRealTiles() {
     let stop = false;
     (async () => {
       const out = [];
-      try { const f = await (await fetch('/api/deals', { cache: 'no-store' })).json(); if (f && !f.test) (f.deals || []).filter((d) => !d.example).forEach((d) => out.push(toTile(d))); } catch (e) {}
-      try { const r = await (await fetch('/api/jobs?recent=1', { cache: 'no-store' })).json(); (r.jobs || []).filter((j) => j.kind === 'buy' && j.stage === 'done').forEach((j) => (j.deals || []).forEach((d) => out.push(toTile(d)))); } catch (e) {}
+      try { const f = await (await fetch('/api/deals', { cache: 'no-store' })).json(); if (f && !f.test) (f.deals || []).forEach((d, i) => { if (!d.example) out.push(toTile(d, `/deal/feed/${i}`)); }); } catch (e) {}
+      try { const r = await (await fetch('/api/jobs?recent=1', { cache: 'no-store' })).json(); (r.jobs || []).filter((j) => j.kind === 'buy' && j.stage === 'done').forEach((j) => (j.deals || []).forEach((d, i) => out.push(toTile(d, `/deal/${j.id}/${i}`)))); } catch (e) {}
       if (!stop) setTiles(out.filter((x) => x.name).slice(0, 8));
     })();
     return () => { stop = true; };
@@ -58,7 +58,7 @@ function MarketViz({ items, real }) {
       <div className="tiles" ref={box}>
         {items.map((it, i) => (
           <div key={i} className={'t' + (scan.includes(i) ? ' scan' : '')}>
-            <a className="ph" href={it.link || undefined} target={it.link ? '_blank' : undefined} rel="noopener">
+            <a className="ph" href={it.href || it.link || undefined} target={!it.href && it.link ? '_blank' : undefined} rel="noopener">
               {it.photo ? <img src={it.photo} alt={it.name} loading={i < 4 ? 'eager' : 'lazy'} /> : <div className="noph">{it.name}</div>}
               {real ? <span className="realtag">Real</span> : <span className="extag">Example</span>}
               {it.mkt ? <div className="cmp">${it.ask} vs <b>${it.mkt}</b> market</div> : null}

@@ -33,6 +33,7 @@ export default function DealCard({ d, example }) {
       {Array.isArray(d.comps) && d.comps.length > 0 && <div className="chips" style={{ marginTop: 8 }}>{d.comps.slice(0, 5).map((c, j) => { const [b, cl] = badge(c.source); return <a key={j} href={c.link || c.url || undefined} target="_blank" rel="noopener" className={'badge ' + cl}>{b} {money(c.price)}</a>; })}</div>}
       {d.rationale && <p className="small muted" style={{ marginTop: 8 }}>{d.rationale}</p>}
       {link && <a className="pill blue sm" href={link} target="_blank" rel="noopener">View on Marketplace</a>}
+      {d._href && <a className="pill gray sm" href={d._href} style={{ marginLeft: 8 }}>Deal details</a>}
     </div>
   </div>;
 }

@@ -9,7 +9,7 @@ export default function Deals() {
     load(); const a = setInterval(load, 15000), b = setInterval(() => setT((x) => x + 1), 5000);
     return () => { clearInterval(a); clearInterval(b); };
   }, []);
-  const deals = f && Array.isArray(f.deals) ? [...f.deals].sort((a, b) => Number(b.discount_pct || 0) - Number(a.discount_pct || 0)) : [];
+  const deals = f && Array.isArray(f.deals) ? f.deals.map((d, i) => ({ ...d, _href: `/deal/feed/${i}` })).sort((a, b) => Number(b.discount_pct || 0) - Number(a.discount_pct || 0)) : [];
   return <main className="wrap">
     <div className="jobhead"><div><p className="eyebrow">Scout feed · {(f && f.area) || 'Austin, TX'}</p><h1>Under-market deals</h1>
       <p className="muted" style={{ marginTop: 6 }}>{!f ? 'Loading...' : f.updated_at ? `Last scouted ${ago(f.updated_at)}` : 'No scout run yet. Deals appear here after the first scout.'}</p></div>
