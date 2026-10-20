@@ -47,7 +47,7 @@ export default function Deal({ params }) {
     <section className="howflip"><h2>How to flip IRL</h2><div className="hf">
       <div><i>1</i><b>Message the seller</b><p>Tap Open listing, say it is still available and offer the asking price or a little under.</p></div>
       <div><i>2</i><b>Pick it up</b><p>Meet somewhere public, check it works, pay cash or with a payment app.</p></div>
-      <div><i>3</i><b>List it with Garage Sale</b><p>Snap a photo on the <a href="/#sell">Sell</a> page. Grok Bot prices it from the comps and posts it for you.</p></div>
+      <div><i>3</i><b>List it with Garage Sale</b><p>Snap a photo on the <a href="/sell">Sell</a> page. Grok Bot prices it from the comps and posts it for you.</p></div>
     </div></section>
   </main>;
 }

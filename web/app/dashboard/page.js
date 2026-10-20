@@ -75,17 +75,17 @@ export default function Dashboard() {
       <div className="tstat"><span>Sells listed</span><b>{sells.length}</b><small>{liveCount} live</small></div>
     </section>
     <div className="board">
-      <section className="bcol"><div className="bh"><h2>Sell</h2><a className="pill blue sm0" href="/#sell">+ Sell</a></div>
+      <section className="bcol"><div className="bh"><h2>Sell</h2><a className="pill blue sm0" href="/sell">+ Sell</a></div>
         <div className="thead"><span>Item</span><span>Range</span><span>Price</span><span>Action</span></div>
         {loading && <div className="empty">Loading...</div>}
-        {!loading && sells.length === 0 && <div className="empty">No items yet. <a href="/#sell">Snap one</a>.</div>}
+        {!loading && sells.length === 0 && <div className="empty">No items yet. <a href="/sell">Snap one</a>.</div>}
         {sells.map((j, k) => { const [a, cls] = action(j); return <a key={j.id} href={`/job/${j.id}`} className="trow" style={{ animationDelay: `${k * 50}ms` }}>
           <span className="it">{j.image_url ? <img src={j.image_url} alt="" /> : <i className="ph0" />}<span><b>{j.title || 'Identifying...'}</b><em className={'chip s-' + j.stage}>{LABEL[j.stage] || j.stage}</em></span></span>
           <span className="rg">{j.low !== null && j.high !== null ? `${$(j.low)}-${$(j.high)}` : '-'}</span>
           <span className="pr">{$(j.price)}</span>
           <span className={'ac ' + cls}>{a}</span></a>; })}
       </section>
-      <section className="bcol"><div className="bh"><h2>Buy</h2><a className="pill gray sm0" href="/#buy">Find deals</a></div>
+      <section className="bcol"><div className="bh"><h2>Buy</h2><a className="pill gray sm0" href="/buy">Find deals</a></div>
         {feed === null && <div className="empty">Loading...</div>}
         {feed !== null && deals.length === 0 && <div className="empty">No deals yet.</div>}
         {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade tcard" style={{ animationDelay: `${k * 50}ms` }}>
@@ -103,7 +103,7 @@ export default function Dashboard() {
     <section className="howflip"><h2>How to flip IRL</h2><div className="hf">
       <div><i>1</i><b>Message the seller</b></div>
       <div><i>2</i><b>Pick it up</b></div>
-      <div><i>3</i><b><a href="/#sell">Snap it to resell</a></b></div>
+      <div><i>3</i><b><a href="/sell">Snap it to resell</a></b></div>
     </div></section>
   </main>;
 }

@@ -338,3 +338,4 @@ h1{letter-spacing:-.02em}
 .trow .rg{color:var(--dim);font-size:12px}
 }
 .chips span.chip0:not(.btn){background:transparent;border:0;padding:4px 2px;color:var(--dim);font-size:13px}
+@media(max-width:600px){.navlinks{gap:14px}.navlinks a:nth-child(4){display:inline}}
