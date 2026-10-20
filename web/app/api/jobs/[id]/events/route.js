@@ -29,9 +29,13 @@ export async function POST(req, { params }) {
     job.inquiries = job.inquiries || [];
     const iid = String(body.id).slice(0, 60);
     const ex = job.inquiries.find((q) => q.id === iid);
-    const rec = { id: iid, buyer_name: String(body.buyer_name || 'Buyer').slice(0, 80), message: String(body.message || '').slice(0, 2000), draft_reply: String(body.draft_reply || '').slice(0, 2000), status: 'drafted', ts: new Date().toISOString() };
+    const rec = { id: iid, buyer_name: String(body.buyer_name || 'Buyer').slice(0, 80), message: String(body.message || '').slice(0, 2000), draft_reply: String(body.draft_reply || '').slice(0, 2000), status: body.status === 'new' ? 'new' : 'drafted', ts: new Date().toISOString() };
+    if (body.intent) rec.intent = String(body.intent).slice(0, 80);
+    if (body.offer_price !== undefined && body.offer_price !== null && body.offer_price !== '' && isFinite(Number(body.offer_price))) rec.offer_price = Number(body.offer_price);
+    if (body.pickup_time) rec.pickup_time = String(body.pickup_time).slice(0, 120);
+    if (body.pickup_place) rec.pickup_place = String(body.pickup_place).slice(0, 160);
     if (ex) Object.assign(ex, rec); else job.inquiries.push(rec);
-    addLog(job, `Buyer message from ${rec.buyer_name}; reply drafted`, job.stage, 'worker');
+    addLog(job, `Buyer message from ${rec.buyer_name}${rec.status === 'new' ? '' : '; reply drafted'}`, job.stage, 'worker');
   } else if (body.type === 'inquiry_sent') {
     const q = (job.inquiries || []).find((x) => x.id === String(body.id));
     if (!q) return json({ error: 'unknown inquiry' }, 404);

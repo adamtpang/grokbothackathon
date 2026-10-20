@@ -16,7 +16,7 @@ export default function Conversations() {
         if (alive) setFull((f) => { const n = { ...f }; got.forEach((g) => { if (g && g.id) n[g.id] = g; }); return n; });
       } catch (e) {}
     };
-    load(); const t = setInterval(load, 30000);
+    load(); const t = setInterval(load, 15000);
     return () => { alive = false; clearInterval(t); };
   }, []);
   async function sendReply(jobId, q) {
@@ -42,9 +42,16 @@ export default function Conversations() {
         <div className="cvh"><a className="txph" href={`/job/${j.id}`}><Photo src={j.image_url} title={j.title} /></a>
           <div className="cvt"><a href={`/job/${j.id}`}><b>{j.title || 'Item'}</b></a>{j.listing_url && <a className="small" href={j.listing_url} target="_blank" rel="noopener">View listing</a>}</div></div>
         <div className="inqs">{inqs.map((q) => <div key={q.id} className="inq">
-          <div className="inqh"><b>{q.buyer_name || 'Buyer'} <small className="muted">{ago(q.sent_at || q.ts)}</small></b><span className={'ist ' + q.status}>{q.status === 'drafted' ? 'Drafted, awaiting your approval' : 'Sent'}</span></div>
+          <div className="inqh"><b>{q.buyer_name || 'Buyer'} <small className="muted">{q.sent_at ? 'replied ' + ago(q.sent_at) : ''}</small></b><span className={'ist ' + q.status}>{q.status === 'new' ? 'New' : q.status === 'drafted' ? 'Drafted, awaiting approval' : 'Sent'}</span></div>
+          <div className="small muted">{j.title || 'Item'} · received {ago(q.ts)}</div>
           <div className="bmsg">{q.message}</div>
-          {q.status === 'drafted' ? <>
+          {(q.intent || q.offer_price !== undefined || q.pickup_time || q.pickup_place) && <div className="chips" style={{ marginTop: 0 }}>
+            {q.intent && <span className="chip0 qchip">{q.intent}</span>}
+            {q.offer_price !== undefined && q.offer_price !== null && <span className="chip0 qchip offer">Offer ${Number(q.offer_price).toLocaleString()}</span>}
+            {q.pickup_time && <span className="chip0 qchip">{q.pickup_time}</span>}
+            {q.pickup_place && <span className="chip0 qchip">{q.pickup_place}</span>}
+          </div>}
+          {q.status !== 'sent' ? <>
             <textarea className="field ta" rows={3} value={drafts[q.id] ?? q.draft_reply ?? ''} onChange={(e) => setDrafts({ ...drafts, [q.id]: e.target.value })} aria-label="Reply" />
             <button className="pill blue sm" onClick={() => sendReply(j.id, q)} disabled={sending === q.id}>{sending === q.id ? 'Sending...' : 'Approve & send'}</button>
           </> : <div className="rmsg">{q.approved_text || q.draft_reply}</div>}

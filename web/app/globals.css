@@ -352,3 +352,8 @@ h1{letter-spacing:-.02em}
 .cvlist{display:grid;gap:14px}.cvjob{border-radius:20px}
 .cvh{display:flex;gap:12px;align-items:center;margin-bottom:12px}.cvt{display:flex;flex-direction:column;gap:2px;min-width:0}.cvt a{color:#fff;text-decoration:none}.cvt a.small{color:var(--blue2)}
 @media(max-width:600px){.navlinks{gap:12px;font-size:13px}.navlinks a:nth-child(5){display:inline}}
+.msglink{position:relative}.nbadge{position:absolute;top:-8px;right:-12px;min-width:16px;height:16px;border-radius:99px;background:#ff3b30;color:#fff;font:700 10px/16px var(--font);text-align:center;padding:0 4px;font-style:normal}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:80;background:var(--blue);color:#fff;font-weight:700;border-radius:999px;padding:12px 20px;box-shadow:0 10px 30px rgba(8,102,255,.45);animation:rowin .4s both}
+.chips span.chip0.qchip{background:#1c1d20;border:1px solid var(--line);color:#e4e6eb;padding:5px 10px;font-size:12px}.chips span.chip0.qchip.offer{color:var(--green);border-color:rgba(48,209,88,.4)}
+.ist.new{background:#ff9f0a;color:#1a1000}
+@media(max-width:600px){.brand{font-size:0;gap:0}.brand .logo{font-size:16px}}

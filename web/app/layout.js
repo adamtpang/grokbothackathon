@@ -1,3 +1,4 @@
+import NavMsgs from '../components/NavMsgs';
 import './globals.css';
 import Assistant from '../components/Assistant';
 export const metadata = {
@@ -12,7 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en"><body>
       <nav className="nav"><div className="wrap navin">
         <a href="/" className="brand"><span className="logo" aria-hidden="true">G</span>Garage Sale</a>
-        <div className="navlinks"><a href="/sell">Sell</a><a href="/buy">Buy</a><a href="/dashboard">Dashboard</a><a href="/conversations">Messages</a><a href="/about">About</a></div>
+        <div className="navlinks"><a href="/sell">Sell</a><a href="/buy">Buy</a><a href="/dashboard">Dashboard</a><NavMsgs /><a href="/about">About</a></div>
       </div></nav>
       {children}
       <Assistant />
