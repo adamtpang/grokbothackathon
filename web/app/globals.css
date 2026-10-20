@@ -411,3 +411,17 @@ h2{letter-spacing:-.02em}
 .nextstep{display:grid;gap:2px;background:#0d1626;border:1px solid rgba(8,102,255,.35);border-radius:16px;padding:12px 14px}
 .nextstep b{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--blue2)}.nextstep span{font-size:16px;font-weight:700}.nextstep small{font-size:12px;color:var(--dim)}
 @media(max-width:600px){.stepper li{font-size:9px}}
+
+/* Landing ambient background */
+.home-hero{isolation:isolate;overflow:hidden;min-height:min(92vh,880px)}
+.home-hero::after{content:"";position:absolute;inset:0;z-index:-2;background:url(/garage-hero.jpg) center right/cover no-repeat;opacity:.55;animation:hzoom 30s ease-in-out infinite alternate}
+.home-hero::before{z-index:-1;inset:0;height:auto;background:
+ radial-gradient(40% 50% at 15% 20%,rgba(8,102,255,.35),transparent 70%),
+ radial-gradient(35% 45% at 85% 80%,rgba(255,149,0,.22),transparent 70%),
+ linear-gradient(90deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.7) 45%,rgba(0,0,0,.25) 100%),
+ linear-gradient(180deg,transparent 60%,var(--bg) 100%);
+ animation:hglow 12s ease-in-out infinite alternate}
+@keyframes hzoom{from{transform:scale(1)}to{transform:scale(1.06)}}
+@keyframes hglow{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(25deg)}}
+@media (max-width:720px){.home-hero{min-height:auto}.home-hero::after{opacity:.4;background-position:70% center}.home-hero::before{background:linear-gradient(180deg,rgba(0,0,0,.75),rgba(0,0,0,.85) 70%,var(--bg))}}
+@media (prefers-reduced-motion:reduce){.home-hero::after,.home-hero::before{animation:none}}

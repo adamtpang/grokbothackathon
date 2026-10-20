@@ -136,7 +136,7 @@ export default function Home({ mode: initMode }) {
 
   return (
     <main>
-      <section className="hero"><div className="wrap hgrid">
+      <section className="hero home-hero"><div className="wrap hgrid">
         <div>
           {initMode ? <><h1>{initMode === 'sell' ? 'Sell anything.' : 'Find flips.'}</h1>
           <p className="sub">{initMode === 'sell' ? 'One photo. Grok Bot writes and posts the listing.' : 'Say what you want. Grok Bot finds it under market.'}</p></> : <>
