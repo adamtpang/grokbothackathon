@@ -131,6 +131,8 @@ export default function JobPage({ params }) {
   const deals = Array.isArray(R.deals) ? [...R.deals].sort((a, b) => Number(b.discount_pct || 0) - Number(a.discount_pct || 0)) : [];
   const idf = R.identification;
   const comps = Array.isArray(R.comps) ? R.comps : [];
+  const conf = idf && idf.confidence !== undefined && idf.confidence !== null && !isNaN(Number(idf.confidence)) ? Math.max(0, Math.min(100, Number(idf.confidence) <= 1 && Number(idf.confidence) > 0 ? Number(idf.confidence) * 100 : Number(idf.confidence))) : null;
+  const unsure = conf !== null && conf < 60;
 
   const stages = STAGES[job.kind] || STAGES.sell;
   const si = Math.max(0, stages.indexOf(job.stage));
@@ -141,7 +143,7 @@ export default function JobPage({ params }) {
   return <main className={'wrap jobmain' + (awaiting ? ' has-sticky' : '')}>
     <div className="jobhead">
       <div><p className="eyebrow">{job.kind === 'buy' ? 'Buying' : 'Selling'}{job.test ? ' · test' : ''}{job.batch_id ? <> · <a href={`/batch/${job.batch_id}`} style={{ textDecoration: 'underline' }}>batch</a></> : null}</p>
-        <h1>{title}</h1></div>
+        <h1>{title}{conf !== null && <span className={'confchip ' + (conf >= 80 ? 'hi' : conf >= 60 ? 'mid' : 'lo')}>{Math.round(conf)}% sure</span>}</h1></div>
       <span className="jid">job {job.id}</span>
     </div>
     <div className="desk-only"><Stepper kind={job.kind} stage={job.stage} /></div>
@@ -154,7 +156,9 @@ export default function JobPage({ params }) {
     <div className="jgrid">
       <div className="col">
         {Array.isArray(job.snapshots) && job.snapshots.length > 0 && <AgentScreen snaps={job.snapshots} active={['approved', 'posting', 'live'].includes(job.stage)} />}
+        {unsure && !job.question && <div className="panel o1"><div className="unsure" style={{ margin: 0 }}>Not sure what this is. Retake the photo or add details below.</div></div>}
         {job.question && <div className="panel qpanel o1"><h3>Grok Bot needs a detail</h3>
+          {unsure && <div className="unsure">Not sure what this is. Retake the photo or add details below.</div>}
           <p style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{job.question.message}</p>
           <form className="row" onSubmit={answer}><input className="field" style={{ flex: '1 1 200px' }} value={ans} onChange={(e) => setAns(e.target.value)} placeholder={job.question.field || 'Your answer'} aria-label="Answer" />
             <button className="pill blue" disabled={sending === 'answer'}>{sending === 'answer' ? 'Sending...' : 'Send'}</button></form></div>}
