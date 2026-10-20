@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
     <html lang="en" className="dark"><body className="bg-background font-sans text-foreground antialiased">
       <nav className="nav"><div className="wrap navin">
         <a href="/" className="brand text-[15px] font-semibold tracking-tight"><span className="logo !h-7 !w-7 !rounded-lg text-sm" aria-hidden="true">G</span>Garage Sale</a>
-        <div className="navlinks items-center !gap-1 text-[13px] sm:!gap-2 [&>a]:rounded-full [&>a]:px-3 [&>a]:py-1.5 [&>a]:transition-colors hover:[&>a]:bg-accent/60"><a href="/sell">Sell</a><a href="/buy">Buy</a><a href="/dashboard">Dashboard</a><NavMsgs /><a href="/about">About</a></div>
+        <div className="navlinks items-center !gap-0 text-[13px] sm:!gap-1 [&>a]:rounded-full [&>a]:px-2 sm:[&>a]:px-3 [&>a]:py-1.5 [&>a]:transition-colors hover:[&>a]:bg-accent/60"><a href="/sell">Sell</a><a href="/buy">Buy</a><a href="/dashboard">Dashboard</a><NavMsgs /><a href="/about">About</a></div>
       </div></nav>
       {children}
       <Assistant />

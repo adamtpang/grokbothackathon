@@ -149,7 +149,7 @@ export default function Home({ mode: initMode }) {
 
   return (
     <main>
-      <section className="hero !pb-16 !pt-16 md:!pt-24"><div className={cn('wrap', initMode ? 'mx-auto max-w-2xl' : 'hgrid')}>
+      <section className="hero home-hero !pb-16 !pt-16 md:!pt-24"><div className={cn('wrap', initMode ? 'mx-auto max-w-2xl' : 'hgrid')}>
         <div className={cn(initMode && 'text-center')}>
           {initMode ? <><h1 className="!text-5xl !font-semibold !tracking-tight md:!text-7xl">{initMode === 'sell' ? 'Sell anything.' : 'Find flips.'}</h1>
           <p className="mx-auto mt-5 max-w-md text-lg text-muted-foreground md:text-xl">{initMode === 'sell' ? 'One photo. Grok Bot writes and posts the listing.' : 'Say what you want. Grok Bot finds it under market.'}</p></> : <>
