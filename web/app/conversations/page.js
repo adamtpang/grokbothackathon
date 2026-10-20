@@ -16,6 +16,7 @@ function nextStep(q, ask, step) {
   const offer = q.offer_price !== undefined && q.offer_price !== null ? Number(q.offer_price) : null;
   const pk = [q.pickup_place, q.pickup_time].filter(Boolean).join(', ');
   if (step >= 4) return 'Done. Mark it sold.';
+  if (q.status === 'sent' || q.status === 'sending') return `Waiting on ${q.buyer_name || 'the buyer'}. Nudge in 24h if no reply`;
   if (offer !== null && ask > 0 && step < 2) return offer < ask * 0.85 ? `Counter at $${r5((offer + ask) / 2).toLocaleString()}` : `Accept and confirm pickup${pk ? ` at ${pk}` : ''}`;
   if (pk && step < 3) return `Confirm pickup at ${pk}`;
   if (q.status === 'sent' || q.status === 'sending') return `Waiting on ${q.buyer_name || 'the buyer'}. Nudge in 24h if no reply`;
