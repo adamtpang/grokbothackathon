@@ -14,6 +14,7 @@ export async function POST(req, { params }) {
     if (job.results && job.results.listing) job.results.listing.price = price;
   }
   addLog(job, `Approved by seller${job.approved_price !== undefined ? ` at $${job.approved_price}` : ''}. Posting next`, 'approved');
+  if (job.test) { addLog(job, 'Test job: approval not queued for the worker', 'approved'); await saveJob(job); return json(job); }
   markPending(job, 'approved');
   await saveJob(job);
   await indexPending(job, 'approved');

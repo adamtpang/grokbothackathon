@@ -1,33 +1,17 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 
-const ICONS = {
-  chair: <path d="M7 4h10l-1 9H8zM6 13h12M12 13v5M8 21l4-3 4 3" />,
-  bike: <><circle cx="6" cy="16" r="3.5" /><circle cx="18" cy="16" r="3.5" /><path d="M6 16l4-7h5l3 7M10 9l2 7" /></>,
-  tv: <><rect x="3" y="5" width="18" height="12" rx="2" /><path d="M8 21h8M12 17v4" /></>,
-  lamp: <path d="M8 3h8l3 8H5zM12 11v8M8 21h8" />,
-  guitar: <><circle cx="9" cy="15" r="5" /><path d="M12.5 11.5L20 4M17 4h3v3" /></>,
-  sofa: <><path d="M4 11V8a2 2 0 012-2h12a2 2 0 012 2v3" /><rect x="2" y="11" width="20" height="6" rx="2" /><path d="M5 17v2M19 17v2" /></>,
-  camera: <><path d="M4 8h3l2-3h6l2 3h3v11H4z" /><circle cx="12" cy="13" r="3.5" /></>,
-  console: <><rect x="6" y="2.5" width="12" height="19" rx="2.5" /><rect x="8.5" y="5" width="7" height="6" rx="1" /><path d="M8 16h3M9.5 14.5v3" /></>,
-  desk: <path d="M3 8h18M5 8v12M19 8v12M5 13h7v7" />,
-  speaker: <><rect x="6" y="3" width="12" height="18" rx="2" /><circle cx="12" cy="14" r="3" /><circle cx="12" cy="7.5" r="1" /></>,
-  drill: <path d="M4 7h11l3 3h2v2h-2l-3 3H9l-1 6H5l1-6H4z" />,
-  cooler: <><rect x="3" y="9" width="18" height="11" rx="2" /><path d="M5 9V7h14v2M3 13h18" /></>,
-};
 const TILES = [
-  ['chair', 'Mesh office chair', 140, 260, '#1b2a44'], ['bike', 'Road bike, 56cm', 320, 410, '#2a1f3a'],
-  ['tv', '55in 4K TV', 180, 240, '#132a2a'], ['lamp', 'Mid-century lamp', 35, 70, '#33261a'],
-  ['guitar', 'Acoustic guitar', 90, 150, '#2b1a1a'], ['sofa', 'Sectional sofa', 400, 520, '#1d2633'],
-  ['camera', 'Mirrorless camera', 450, 610, '#222'], ['console', 'Handheld console', 45, 95, '#1a2b1d'],
-  ['desk', 'Standing desk', 150, 230, '#2a2a1a'], ['speaker', 'Bookshelf speakers', 60, 120, '#1a1f2e'],
-  ['drill', 'Cordless drill kit', 55, 99, '#2e1d14'], ['cooler', '45 qt cooler', 120, 230, '#14262e'],
+  ['chair', 'Ergonomic office chair', 140, 260], ['airpods', 'AirPods Pro', 95, 160], ['lamp', 'Desk lamp', 15, 30], ['guitar', 'Acoustic guitar', 120, 210],
+  ['sofa', 'Fabric sofa', 220, 380], ['camera', 'Mirrorless camera body', 900, 1250], ['drill', 'Cordless drill', 45, 85], ['cooler', 'Soft cooler bag', 110, 200],
 ];
+const FEED = ['Scanning new Austin listings', 'Comparing with eBay sold', 'Checking Amazon price', 'Found 3 local comps', 'Flagged under-market listing', 'Drafting listing copy'];
 
 function MarketViz() {
   const box = useRef(null);
   const [scan, setScan] = useState([0, 5, 10]);
   const [pos, setPos] = useState([]);
+  const [tick, setTick] = useState(0);
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const place = (s) => {
@@ -41,7 +25,7 @@ function MarketViz() {
     const id = setInterval(() => {
       const visible = [...box.current.querySelectorAll('.t')].map((t, i) => (t.offsetParent ? i : -1)).filter((i) => i >= 0);
       cur = cur.map((c, k) => { let n; do { n = visible[Math.floor(Math.random() * visible.length)]; } while (cur.includes(n)); return n; });
-      setScan(cur); place(cur);
+      setScan(cur); place(cur); setTick((x) => x + 1);
     }, 1900);
     const onR = () => place(cur);
     window.addEventListener('resize', onR);
@@ -49,12 +33,13 @@ function MarketViz() {
   }, []);
   return (
     <div className="viz" aria-label="Illustration of AI agents scanning Marketplace listings">
-      <div className="vizbar"><span className="live"><i />Agents scanning Marketplace</span><span>Austin, TX</span></div>
+      <div className="vizbar"><span className="live"><i />Grok Bot agents scanning Marketplace</span><span>Austin, TX</span></div>
       <div className="tiles" ref={box}>
-        {TILES.map(([ic, nm, ask, mkt, bg], i) => (
+        {TILES.map(([ic, nm, ask, mkt], i) => (
           <div key={i} className={'t' + (scan.includes(i) ? ' scan' : '')}>
-            <div className="ph" style={{ background: `radial-gradient(90% 90% at 30% 20%, ${bg}, #0d0d0f)` }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="#9fb7e6" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">{ICONS[ic]}</svg>
+            <div className="ph">
+              <img src={`/items/${ic}.jpg`} alt={nm} loading={i < 4 ? 'eager' : 'lazy'} />
+              <span className="extag">Example</span>
               <div className="cmp">${ask} vs <b>${mkt}</b> market</div>
             </div>
             <div className="meta"><div className="pr">${ask}</div><div className="nm">{nm}</div></div>
@@ -62,7 +47,7 @@ function MarketViz() {
         ))}
         {pos.map((p, k) => p && <div key={k} className="agent" style={p}>{['G', 'R', 'K'][k]}</div>)}
       </div>
-      <div className="vizfoot">Illustration. Items and prices shown here are examples, not live listings.</div>
+      <div className="vizfoot"><span className="cursor" /> {FEED[tick % FEED.length]}... <span style={{ float: 'right' }}>Example items and prices, not live listings</span></div>
     </div>
   );
 }
@@ -84,59 +69,75 @@ export default function Home() {
   const [over, setOver] = useState(false);
   const [q, setQ] = useState(''); const [max, setMax] = useState('');
 
-  async function sell(file) {
-    if (!file || !/^image\//.test(file.type)) { setErr('Please choose an image.'); return; }
+  const [prog, setProg] = useState('');
+  async function sell(fileList) {
+    const files = [...(fileList || [])].filter((f) => /^image\//.test(f.type)).slice(0, 30);
+    if (!files.length) { setErr('Please choose an image.'); return; }
     setErr(''); setBusy('sell');
+    const test = new URLSearchParams(location.search).get('test') === '1';
+    const batchId = files.length > 1 ? crypto.randomUUID().replace(/-/g, '').slice(0, 12) : '';
+    const ids = [];
     try {
-      const f = await shrink(file);
-      const fd = new FormData(); fd.append('image', f, f.name || 'photo.jpg');
-      const r = await fetch('/api/jobs', { method: 'POST', body: fd });
-      const j = await r.json();
-      if (!r.ok || !j.id) throw new Error(j.error || 'Upload failed');
-      location.href = `/job/${j.id}`;
-    } catch (e) { setErr(String(e.message || e)); setBusy(''); }
+      for (let i = 0; i < files.length; i++) {
+        setProg(files.length > 1 ? `Uploading ${i + 1} of ${files.length}...` : 'Uploading...');
+        const f = await shrink(files[i]);
+        const fd = new FormData(); fd.append('image', f, f.name || 'photo.jpg');
+        if (batchId) fd.append('batch_id', batchId);
+        if (test) fd.append('test', '1');
+        const r = await fetch('/api/jobs', { method: 'POST', body: fd });
+        const j = await r.json();
+        if (!r.ok || !j.id) throw new Error(j.error || 'Upload failed');
+        ids.push(j.id);
+      }
+      if (ids.length === 1) { location.href = `/job/${ids[0]}`; return; }
+      const r = await fetch('/api/batches', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ id: batchId, job_ids: ids }) });
+      const b = await r.json();
+      location.href = `/batch/${b.id || batchId}`;
+    } catch (e) { setErr(String(e.message || e) + (ids.length ? ` (${ids.length} uploaded)` : '')); setBusy(''); setProg(''); }
   }
   async function buy(e) {
     e.preventDefault();
     if (!q.trim()) { setErr('Tell us what you are looking for.'); return; }
     setErr(''); setBusy('buy');
     try {
-      const body = { kind: 'buy', query: q.trim() }; if (max) body.max_price = Number(max);
+      const body = { kind: 'buy', query: q.trim() }; if (max) body.max_price = Number(max); if (new URLSearchParams(location.search).get('test') === '1') body.test = 1;
       const r = await fetch('/api/jobs', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
       const j = await r.json();
       if (!r.ok || !j.id) throw new Error(j.error || 'Request failed');
       location.href = `/job/${j.id}`;
     } catch (e2) { setErr(String(e2.message || e2)); setBusy(''); }
   }
-  const pick = (e) => { const f = e.target.files && e.target.files[0]; e.target.value = ''; sell(f); };
+  const pick = (e) => { const f = e.target.files; sell(f); e.target.value = ''; };
 
   return (
     <main>
       <section className="hero"><div className="wrap hgrid">
         <div>
-          <p className="eyebrow">Garage Sale Town · Grok Bot Hackathon · Austin</p>
+          <p className="eyebrow">Garage Sale · Grok Bot Hackathon · Austin</p>
           <h1>AI agents that buy and sell on Marketplace for you.</h1>
           <p className="sub">Snap a photo and Grok Bot agents identify it, research real prices, write the listing, and post it to Facebook Marketplace once you approve. Or tell them what you want and they hunt for under-market deals.</p>
           <div className="actions">
             <div id="sell" className={'act drag' + (over ? ' over' : '')}
               onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
-              onDrop={(e) => { e.preventDefault(); setOver(false); sell(e.dataTransfer.files && e.dataTransfer.files[0]); }}>
+              onDrop={(e) => { e.preventDefault(); setOver(false); sell(e.dataTransfer.files); }}>
               <h3>Sell</h3>
               <div className="row">
-                <label className="pill blue big"><input type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? 'Uploading...' : 'Take photo'}</label>
-                <label className="pill gray big"><input type="file" accept="image/*" onChange={pick} disabled={!!busy} />Upload photo</label>
+                <label className="pill blue big"><input type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? (prog || 'Uploading...') : 'Take photo'}</label>
+                <label className="pill gray big"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Upload photos</label>
               </div>
-              <p className="hint">One photo is all it takes. On desktop you can also drop an image here.</p>
+              <p className="hint">Moving out? Pick many photos at once and each one becomes its own listing. On desktop you can drop images here.</p>
             </div>
             <form id="buy" className="act" onSubmit={buy}>
               <h3>Buy</h3>
+              <div className="bubble"><span className="gbi sm" style={{ display: 'inline-block', verticalAlign: '-4px', marginRight: 8 }} />What do you want to buy? I will scout Austin Marketplace and compare prices.</div>
               <div className="buyform">
-                <input className="field" placeholder="What are you looking for?" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
+                <input className="field" placeholder="e.g. Herman Miller chair" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
                 <input className="field" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />
                 <button className="pill blue" disabled={!!busy}>{busy === 'buy' ? 'Starting...' : 'Find deals'}</button>
               </div>
             </form>
             {err && <p className="err">{err}</p>}
+            <a href="/deals" className="hint" style={{ textDecoration: 'underline' }}>See the latest scout feed on /deals</a>
           </div>
         </div>
         <MarketViz />

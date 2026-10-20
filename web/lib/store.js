@@ -87,6 +87,20 @@ export async function clearPending(id, event) {
   if (urls.length) await del(urls);
   return urls.length;
 }
+export const isTest = (req, form) => req.headers.get('x-gst-test') === '1' || (form && String(form.get('test') || '') === '1');
+
+export async function saveVersioned(prefixKey, obj) {
+  const key = `${prefixKey}v-${String(Date.now()).padStart(15, '0')}-${Math.random().toString(36).slice(2, 8)}.json`;
+  await put(key, JSON.stringify(obj), { access: 'public', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60 });
+}
+export async function readLatest(prefixKey) {
+  const { blobs } = await list({ prefix: prefixKey, limit: 1000 });
+  if (!blobs.length) return null;
+  blobs.sort((a, b) => (a.pathname < b.pathname ? -1 : 1));
+  const r = await fetch(blobs[blobs.length - 1].url, { cache: 'no-store' });
+  if (blobs.length > 40) { try { await del(blobs.slice(0, -5).map((b) => b.url)); } catch (e) {} }
+  return r.ok ? r.json() : null;
+}
 export const workerOk = (req) => !!process.env.GST_WORKER_KEY && req.headers.get('x-worker-key') === process.env.GST_WORKER_KEY;
 
 export const json = (data, status = 200) =>

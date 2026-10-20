@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import DealCard from '../../../components/DealCard';
 
 const STAGES = {
   sell: ['received', 'identifying', 'researching', 'writing', 'awaiting_approval', 'approved', 'posting', 'live'],
@@ -25,12 +26,14 @@ function Stepper({ kind, stage }) {
   ))}{i < 0 && stage ? <div className="st cur"><i>•</i>{stage}</div> : null}</div>;
 }
 
-function Log({ logs }) {
+const ICON = { received: '📥', identifying: '🔍', researching: '📊', writing: '✍️', awaiting_approval: '✋', approved: '✅', posting: '🚀', live: '🟢', scouting: '🛰️', comparing: '⚖️', done: '🏁' };
+function Log({ logs, active }) {
   const ref = useRef(null);
   useEffect(() => { if (ref.current) ref.current.scrollTop = ref.current.scrollHeight; }, [logs.length]);
-  return <div className="term" ref={ref}>{logs.length === 0 && <div className="ln">waiting for the first event...</div>}
+  return <><div className="termbar"><i /><i /><i /><span style={{ marginLeft: 8 }}>grok-bot agent · live</span></div><div className="term" ref={ref}>{logs.length === 0 && <div className="ln">waiting for the first event...</div>}
     {logs.map((l, k) => <div key={k} className={'ln ' + (l.source || '') + (k === logs.length - 1 ? ' new' : '')}>
-      <span className="ts">{t(l.ts)}</span> <span className="sg">[{l.stage || '-'}]</span> {l.message}</div>)}</div>;
+      <span className="ts">{t(l.ts)}</span> <span className="ic">{ICON[l.stage] || '•'}</span> <span className="sg">{l.source === 'worker' ? 'agent' : 'app'}:{l.stage || '-'}</span> {l.message}</div>)}
+    {active && <div className="ln"><span className="ts">{t(new Date().toISOString())}</span> <span className="cursor" /></div>}</div></>;
 }
 
 function Price({ p }) {
@@ -110,7 +113,7 @@ export default function JobPage({ params }) {
 
   return <main className="wrap">
     <div className="jobhead">
-      <div><p className="eyebrow">{job.kind === 'buy' ? 'Buy request' : 'Sell job'}</p>
+      <div><p className="eyebrow">{job.kind === 'buy' ? 'Buy request' : 'Sell job'}{job.test ? ' · test (not sent to worker)' : ''}{job.batch_id ? <> · <a href={`/batch/${job.batch_id}`} style={{ textDecoration: 'underline' }}>batch</a></> : null}</p>
         <h1>{job.kind === 'buy' ? `Finding: ${job.query}${job.max_price ? ` under ${money(job.max_price)}` : ''}` : (R.listing && R.listing.title) || (idf && idf.name) || 'Selling your item'}</h1></div>
       <span className="jid">job {job.id}</span>
     </div>
@@ -138,14 +141,7 @@ export default function JobPage({ params }) {
         {R.listing && <div className="panel"><h3>Listing preview</h3><Listing l={R.listing} img={job.image_url} /></div>}
         {job.kind === 'buy' && <div className="panel"><h3>Deals {deals.length > 0 && <span>{deals.length}</span>}</h3>
           {deals.length === 0 ? <p className="muted">Scouts are looking. Deals appear here as they are found.</p> :
-            <div className="deals">{deals.map((d, k) => <div key={k} className="deal">
-              <div>
-                <a className="dt" href={d.link || '#'} target="_blank" rel="noopener">{d.title}</a>
-                {d.rationale && <p className="small muted" style={{ marginTop: 6 }}>{d.rationale}</p>}
-                {Array.isArray(d.comps) && d.comps.length > 0 && <div className="chips" style={{ marginTop: 8 }}>{d.comps.map((c, j) => { const [b, cl] = badge(c.source); return <a key={j} href={c.link || '#'} target="_blank" rel="noopener" className={'badge ' + cl}>{b} {money(c.price)}</a>; })}</div>}
-              </div>
-              <div style={{ textAlign: 'right' }}><div className="ask">{money(d.ask_price)}</div><div className="mkt">{money(d.est_market_price)}</div>{d.discount_pct !== undefined && <span className="off">{pct(d.discount_pct)} under</span>}</div>
-            </div>)}</div>}
+            <div className="dgrid">{deals.map((d, k) => <DealCard key={k} d={d} example={!!job.test} />)}</div>}
         </div>}
         {R.price && <div className="panel"><h3>Price research</h3><Price p={R.price} /></div>}
         {comps.length > 0 && <div className="panel"><h3>Comparables <span>{comps.length}</span></h3><div className="comps">
@@ -159,7 +155,7 @@ export default function JobPage({ params }) {
           {['name', 'brand', 'model', 'condition'].map((k) => idf[k] ? [<dt key={k + 't'}>{k[0].toUpperCase() + k.slice(1)}</dt>, <dd key={k}>{String(idf[k])}</dd>] : null)}
           {idf.details && <><dt>Details</dt><dd>{typeof idf.details === 'string' ? idf.details : Array.isArray(idf.details) ? idf.details.join(', ') : JSON.stringify(idf.details)}</dd></>}
         </dl></div>}
-        <div className="panel"><h3>Live activity <span className="small">{logs.length} events</span></h3><Log logs={logs} /></div>
+        <div className="panel"><h3>Live activity <span className="small">{logs.length} events</span></h3><Log logs={logs} active={!['live', 'done'].includes(job.stage)} /></div>
       </div>
     </div>
   </main>;
