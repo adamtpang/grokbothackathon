@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
 export default function NavMsgs() {
   const [unread, setUnread] = useState(0); const [toast, setToast] = useState(''); const last = useRef(null);
   useEffect(() => {
@@ -24,6 +25,6 @@ export default function NavMsgs() {
     load(); const t = setInterval(load, onMsgs() ? 15000 : 30000);
     return () => { alive = false; clearInterval(t); };
   }, []);
-  return <><a href="/conversations" className="msglink">Messages{unread > 0 && <i className="nbadge">{unread}</i>}</a>
-    {toast && <a href="/conversations" className="toast">{toast}</a>}</>;
+  return <><a href="/conversations" className="msglink inline-flex items-center gap-1.5">Messages{unread > 0 && <Badge variant="destructive" className="h-5 min-w-5 justify-center px-1.5 not-italic">{unread}</Badge>}</a>
+    {toast && <a href="/conversations" className="fixed left-1/2 top-20 z-[60] -translate-x-1/2 rounded-full border border-border bg-card/95 px-5 py-3 text-sm font-medium text-foreground shadow-2xl backdrop-blur animate-in fade-in slide-in-from-top-2">{toast}</a>}</>;
 }

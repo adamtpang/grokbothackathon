@@ -1,6 +1,13 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import Photo from '../../components/Photo';
+import { ArrowRight, ChevronRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 const $ = (v) => (v === null || v === undefined || v === '' || isNaN(Number(v)) ? '-' : '$' + Math.round(Number(v)).toLocaleString());
 const LABEL = { received: 'Received', identifying: 'Identifying', researching: 'Researching', writing: 'Writing', awaiting_approval: 'Needs approval', approved: 'Approved', posting: 'Posting', live: 'Live' };
 function Tick({ value }) {
@@ -57,53 +64,59 @@ export default function Dashboard() {
   const liveCount = sells.filter((j) => j.stage === 'live').length;
   const xp = sells.length * 20 + liveCount * 50 + real.length * 10 + Math.round(profitTotal / 10);
   const level = Math.floor(xp / 250) + 1, into = xp % 250;
-  return <main className="wrap dash">
-    <section className="mot">
-      <div><p className="eyebrow">Money on the table</p><div className="motv"><Tick value={sellTotal + profitTotal} /></div></div>
-      <div className="motk">
-        <div><span>Your items</span><b><Tick value={sellTotal} /></b><small>{sells.length} listing{sells.length === 1 ? '' : 's'}</small></div>
-        <div><span>Deal profit</span><b className="green"><Tick value={profitTotal} /></b><small>{deals.length} deal{deals.length === 1 ? '' : 's'}</small></div>
-        <div><span>Last scouted</span><b style={{ fontSize: 18 }}>{feed && feed.updated_at ? new Date(feed.updated_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Not yet'}</b><small>Austin, TX</small></div>
+  const tone = { warn: 'warn', go: 'brand', ok: 'success', dim: 'secondary' };
+  return <main className="wrap py-16 md:py-24">
+    <section className="text-center">
+      <p className="text-sm font-medium text-muted-foreground">Money on the table</p>
+      <div className="mt-3 text-6xl font-semibold tabular-nums tracking-tight md:text-8xl"><Tick value={sellTotal + profitTotal} /></div>
+      <div className="mx-auto mt-12 grid max-w-3xl grid-cols-3 gap-3">
+        <Card className="border-border/60 p-5 text-left"><div className="text-xs text-muted-foreground">Your items</div><div className="mt-2 text-2xl font-semibold tabular-nums"><Tick value={sellTotal} /></div><div className="mt-1 text-xs text-muted-foreground">{sells.length} listing{sells.length === 1 ? '' : 's'}</div></Card>
+        <Card className="border-border/60 p-5 text-left"><div className="text-xs text-muted-foreground">Deal profit</div><div className="mt-2 text-2xl font-semibold tabular-nums text-success"><Tick value={profitTotal} /></div><div className="mt-1 text-xs text-muted-foreground">{deals.length} deal{deals.length === 1 ? '' : 's'}</div></Card>
+        <Card className="border-border/60 p-5 text-left"><div className="text-xs text-muted-foreground">Last scouted</div><div className="mt-2 text-2xl font-semibold">{feed && feed.updated_at ? new Date(feed.updated_at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : 'Not yet'}</div><div className="mt-1 text-xs text-muted-foreground">Austin, TX</div></Card>
       </div>
     </section>
-    <section className="trader">
-      <div className="tav">G</div>
-      <div className="tinfo"><b>Austin flipper</b><small>Level {level} trader</small>
-        <div className="xp"><i style={{ width: `${(into / 250) * 100}%` }} /></div><small className="xpn">{into} / 250 XP to level {level + 1}</small></div>
-      <div className="tstat"><span>Spread found</span><b className="green">+<Tick value={profitTotal} /></b></div>
-      <div className="tstat"><span>Buys scouted</span><b>{real.length}</b></div>
-      <div className="tstat"><span>Sells listed</span><b>{sells.length}</b><small>{liveCount} live</small></div>
-    </section>
-    <div className="board">
-      <section className="bcol"><div className="bh"><h2>Sell</h2><a className="pill blue sm0" href="/sell">+ Sell</a></div>
-        <div className="thead"><span>Item</span><span>Range</span><span>Price</span><span>Action</span></div>
-        {loading && <div className="empty">Loading...</div>}
-        {!loading && sells.length === 0 && <div className="empty">No items yet. <a href="/sell">Snap one</a>.</div>}
-        {sells.map((j, k) => { const [a, cls] = action(j); return <a key={j.id} href={`/job/${j.id}`} className="trow" style={{ animationDelay: `${k * 50}ms` }}>
-          <span className="it">{j.image_url ? <img src={j.image_url} alt="" /> : <i className="ph0" />}<span><b>{j.title || 'Identifying...'}</b><em className={'chip s-' + j.stage}>{LABEL[j.stage] || j.stage}</em></span></span>
-          <span className="rg">{j.low !== null && j.high !== null ? `${$(j.low)}-${$(j.high)}` : '-'}</span>
-          <span className="pr">{$(j.price)}</span>
-          <span className={'ac ' + cls}>{a}</span></a>; })}
+    <Card className="mt-6 flex flex-wrap items-center gap-6 border-border/60 p-6">
+      <Avatar className="h-12 w-12"><AvatarFallback className="bg-brand text-lg font-semibold text-white">G</AvatarFallback></Avatar>
+      <div className="min-w-[200px] flex-1"><div className="font-semibold">Austin flipper</div><div className="text-sm text-muted-foreground">Level {level} trader</div>
+        <Progress value={(into / 250) * 100} className="mt-3 h-1.5" indicatorClassName="bg-brand" /><div className="mt-1.5 text-xs text-muted-foreground">{into} / 250 XP to level {level + 1}</div></div>
+      <div className="flex gap-8 text-sm">
+        <div><div className="text-xs text-muted-foreground">Spread found</div><div className="mt-1 text-lg font-semibold text-success">+<Tick value={profitTotal} /></div></div>
+        <div><div className="text-xs text-muted-foreground">Buys scouted</div><div className="mt-1 text-lg font-semibold">{real.length}</div></div>
+        <div><div className="text-xs text-muted-foreground">Sells listed</div><div className="mt-1 text-lg font-semibold">{sells.length} <span className="text-xs font-normal text-muted-foreground">{liveCount} live</span></div></div>
+      </div>
+    </Card>
+    <div className="mt-16 grid gap-10 lg:grid-cols-2">
+      <section className="min-w-0"><div className="mb-5 flex items-center justify-between"><h2 className="!text-3xl !font-semibold !tracking-tight">Sell</h2><Button asChild variant="brand" size="sm"><a href="/sell">+ Sell</a></Button></div>
+        <Card className="overflow-hidden border-border/60">
+          {loading && <div className="p-8 text-center text-sm text-muted-foreground">Loading...</div>}
+          {!loading && sells.length === 0 && <div className="p-8 text-center text-sm text-muted-foreground">No items yet. <a href="/sell" className="text-foreground underline underline-offset-4">Snap one</a>.</div>}
+          {sells.map((j, k) => { const [a, cls] = action(j); return <a key={j.id} href={`/job/${j.id}`} className={cn('flex items-center gap-4 px-5 py-4 transition-colors hover:bg-accent/40', k > 0 && 'border-t border-border/60')}>
+            {j.image_url ? <img src={j.image_url} alt="" className="h-12 w-12 shrink-0 rounded-xl object-cover" /> : <i className="h-12 w-12 shrink-0 rounded-xl bg-secondary" />}
+            <span className="min-w-0 flex-1"><span className="block truncate font-medium">{j.title || 'Identifying...'}</span>
+              <span className="mt-1 flex items-center gap-2 text-xs text-muted-foreground"><Badge variant="secondary" className="font-normal">{LABEL[j.stage] || j.stage}</Badge>{j.low !== null && j.high !== null ? `${$(j.low)}-${$(j.high)}` : ''}</span></span>
+            <span className="flex shrink-0 flex-col items-end gap-1"><span className="font-semibold tabular-nums">{$(j.price)}</span><Badge variant={tone[cls]} className="font-normal">{a}</Badge></span></a>; })}
+        </Card>
       </section>
-      <section className="bcol"><div className="bh"><h2>Buy</h2><a className="pill gray sm0" href="/buy">Find deals</a></div>
-        {feed === null && <div className="empty">Loading...</div>}
-        {feed !== null && deals.length === 0 && <div className="empty">No deals yet.</div>}
-        {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade tcard" style={{ animationDelay: `${k * 50}ms` }}>
-          <a className="tph" href={d._href}><Photo src={photo} title={d.title} fb={(d.fb_url || d.source_url || d.link || d.url)} /></a><div className="tbody">
-          <a className="it" href={d._href}><span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}<i className="arrow">›</i></a>
-          <div className="flip">
-            <a className="leg buyl" href={n.buyUrl || undefined} target="_blank" rel="noopener"><span>Buy here</span><b>FB {$(n.ask)}</b></a>
-            <i className="arrow">→</i>
-            <a className="leg selll" href={n.sellUrl || undefined} target="_blank" rel="noopener"><span>Sell here</span><b>{n.resell !== null ? `${n.sellSrc} ${$(n.resell)}` : 'Check comps'}</b></a>
-            <i className="arrow">=</i>
-            {n.profit !== null ? <em className={'pchip big' + (n.profit < 0 ? ' neg' : '')}>{n.profit >= 0 ? '+' : ''}{$(n.profit)}{n.ask ? <small className="spct"> {Math.round((n.profit / n.ask) * 100)}%</small> : null}</em> : <em className="pchip big dim">?</em>}
-          </div></div></div>; })}
+      <section className="min-w-0"><div className="mb-5 flex items-center justify-between"><h2 className="!text-3xl !font-semibold !tracking-tight">Buy</h2><Button asChild variant="secondary" size="sm"><a href="/buy">Find deals</a></Button></div>
+        {feed === null && <Card className="border-border/60 p-8 text-center text-sm text-muted-foreground">Loading...</Card>}
+        {feed !== null && deals.length === 0 && <Card className="border-border/60 p-8 text-center text-sm text-muted-foreground">No deals yet.</Card>}
+        <div className="grid gap-3">{deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <Card key={k} className="flex gap-4 overflow-hidden border-border/60 p-3">
+          <a className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-secondary [&>img]:h-full [&>img]:w-full [&>img]:object-cover [&>.phx]:h-full [&>.phx]:w-full" href={d._href}><Photo src={photo} title={d.title} fb={(d.fb_url || d.source_url || d.link || d.url)} /></a>
+          <div className="flex min-w-0 flex-1 flex-col justify-between py-1 pr-1">
+            <a href={d._href} className="flex items-start justify-between gap-2"><span className="min-w-0"><span className="block truncate font-medium">{d.title}</span>
+              <span className="mt-1 flex flex-wrap items-center gap-1.5"><Badge variant="secondary" className="max-w-[180px] truncate font-normal">{d._ex ? 'Example' : d._src}</Badge>{n.disc !== null && isFinite(n.disc) ? <span className="text-xs text-muted-foreground">{Math.round(n.disc)}% under</span> : null}</span></span>
+              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" /></a>
+            <div className="mt-2 flex items-center gap-2 text-xs">
+              <a className="rounded-lg bg-secondary px-2.5 py-1.5 hover:bg-accent" href={n.buyUrl || undefined} target="_blank" rel="noopener"><span className="text-muted-foreground">Buy </span><b className="font-medium">FB {$(n.ask)}</b></a>
+              <ArrowRight className="h-3 w-3 text-muted-foreground" />
+              <a className="truncate rounded-lg bg-secondary px-2.5 py-1.5 hover:bg-accent" href={n.sellUrl || undefined} target="_blank" rel="noopener"><span className="text-muted-foreground">Sell </span><b className="font-medium">{n.resell !== null ? `${n.sellSrc} ${$(n.resell)}` : 'Check comps'}</b></a>
+              <span className="ml-auto shrink-0">{n.profit !== null ? <Badge variant={n.profit < 0 ? 'destructive' : 'success'} className="text-sm">{n.profit >= 0 ? '+' : ''}{$(n.profit)}{n.ask ? <span className="ml-1 text-xs opacity-70">{Math.round((n.profit / n.ask) * 100)}%</span> : null}</Badge> : <Badge variant="secondary">?</Badge>}</span>
+            </div></div></Card>; })}</div>
       </section>
     </div>
-    <section className="howflip"><h2>How to flip IRL</h2><div className="hf">
-      <div><i>1</i><b>Message the seller</b></div>
-      <div><i>2</i><b>Pick it up</b></div>
-      <div><i>3</i><b><a href="/sell">Snap it to resell</a></b></div>
-    </div></section>
+    <section className="mt-24 text-center"><h2 className="!text-3xl !font-semibold !tracking-tight md:!text-5xl">How to flip IRL</h2>
+      <div className="mx-auto mt-10 grid max-w-3xl gap-3 md:grid-cols-3">
+        {[['1', 'Message the seller'], ['2', 'Pick it up'], ['3', <a key="a" href="/sell" className="underline-offset-4 hover:underline">Snap it to resell</a>]].map(([n, t]) => <Card key={n} className="border-border/60 p-6 text-left"><div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm">{n}</div><div className="mt-5 font-medium">{t}</div></Card>)}
+      </div></section>
   </main>;
 }

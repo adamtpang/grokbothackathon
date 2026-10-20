@@ -3,6 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import GarageScene from '../components/GarageScene';
 import Photo, { prox } from '../components/Photo';
 import ModeFeed from '../components/ModeFeed';
+import { ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 const TILES = [
   ['chair', 'Ergonomic office chair', 140, 260], ['airpods', 'AirPods Pro', 95, 160], ['lamp', 'Desk lamp', 15, 30], ['guitar', 'Acoustic guitar', 120, 210],
@@ -86,6 +94,8 @@ async function shrink(file) {
   } catch (e) { return file; }
 }
 
+function Drop({ children, className, over, busy }) { return <label className={cn('relative flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-2xl border border-dashed border-border bg-background/40 px-6 py-12 text-center transition-colors hover:border-muted-foreground/50 hover:bg-accent/30', over && 'border-brand bg-brand/10', busy && 'pointer-events-none opacity-70', className)}>{children}</label>; }
+
 export default function Home({ mode: initMode }) {
   const [mode, setMode] = useState(initMode === 'buy' ? 'buy' : 'sell');
   const real = useRealTiles();
@@ -134,76 +144,74 @@ export default function Home({ mode: initMode }) {
   }
   const pick = (e) => { const f = e.target.files; sell(f); e.target.value = ''; };
 
+  const howSteps = [['1', 'Identify', 'What is it?'], ['2', 'Price', 'What is it worth?'], ['3', 'Write', 'Title, price, details.'], ['4', 'Approve', 'You say yes.'], ['5', 'Live', 'On Marketplace.']];
+  const feats = ['Photo to listing', 'Honest item ID', 'Real prices', '24/7 deal scout', 'Profit dashboard', 'Buyer replies drafted', 'You approve everything'];
+
   return (
     <main>
-      <section className="hero"><div className="wrap hgrid">
-        <div>
-          {initMode ? <><h1>{initMode === 'sell' ? 'Sell anything.' : 'Find flips.'}</h1>
-          <p className="sub">{initMode === 'sell' ? 'One photo. Grok Bot writes and posts the listing.' : 'Say what you want. Grok Bot finds it under market.'}</p></> : <>
-          <p className="eyebrow desk-only">Garage Sale · Grok Bot Hackathon · Austin</p>
-          <h1>Snap it. <span style={{ color: "var(--blue2)" }}>Grok Bot sells it.</span></h1>
-          <p className="sub">Photo in, Facebook Marketplace listing out. You approve every step.</p></>}
-          <div className="actions">
-            <div id={mode} className={'act onebox' + (mode === 'sell' && over ? ' drag over' : mode === 'sell' ? ' drag' : '')}
+      <section className="hero !pb-16 !pt-16 md:!pt-24"><div className={cn('wrap', initMode ? 'mx-auto max-w-2xl' : 'hgrid')}>
+        <div className={cn(initMode && 'text-center')}>
+          {initMode ? <><h1 className="!text-5xl !font-semibold !tracking-tight md:!text-7xl">{initMode === 'sell' ? 'Sell anything.' : 'Find flips.'}</h1>
+          <p className="mx-auto mt-5 max-w-md text-lg text-muted-foreground md:text-xl">{initMode === 'sell' ? 'One photo. Grok Bot writes and posts the listing.' : 'Say what you want. Grok Bot finds it under market.'}</p></> : <>
+          <Badge variant="secondary" className="desk-only mb-6 px-3 py-1 text-[12px] font-normal text-muted-foreground">Garage Sale · Grok Bot Hackathon · Austin</Badge>
+          <h1 className="!text-5xl !font-semibold !tracking-tight md:!text-7xl">Snap it.<br /><span className="text-muted-foreground">Grok Bot sells it.</span></h1>
+          <p className="mt-5 max-w-md text-lg text-muted-foreground md:text-xl">Photo in, Facebook Marketplace listing out. You approve every step.</p></>}
+          <div className="mt-10 grid gap-4 text-left">
+            <Card id={mode} className={cn('min-w-0 border-border/70 bg-card/80 p-5 backdrop-blur md:p-6', mode === 'sell' && over && 'border-brand')}
               onDragOver={(e) => { if (mode !== 'sell') return; e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
               onDrop={(e) => { if (mode !== 'sell') return; e.preventDefault(); setOver(false); sell(e.dataTransfer.files); }}>
-              <div className="mtog" role="tablist">
-                <button type="button" role="tab" aria-selected={mode === 'buy'} className={mode === 'buy' ? 'on' : ''} onClick={() => setMode('buy')}>Buy</button>
-                <button type="button" role="tab" aria-selected={mode === 'sell'} className={mode === 'sell' ? 'on' : ''} onClick={() => setMode('sell')}>Sell</button>
-              </div>
-              {mode === 'sell' ? <>
-                <label className="bigbox sellbox"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />
-                  <span className="bbt">{busy === 'sell' ? (prog || 'Uploading...') : 'Drop photos or tap to add'}</span>
-                  <span className="bbs">Each photo becomes a listing</span></label>
-                <div className="row onerow">
-                  <label className="pill blue big"><input type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? (prog || 'Uploading...') : 'Take photo'}</label>
-                  <label className="pill gray big"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Attach photos</label>
+              <Tabs value={mode} onValueChange={(v) => setMode(v)}>
+                <TabsList className="grid w-full grid-cols-2 md:w-64">
+                  <TabsTrigger value="buy">Buy</TabsTrigger>
+                  <TabsTrigger value="sell">Sell</TabsTrigger>
+                </TabsList>
+              </Tabs>
+              {mode === 'sell' ? <div className="mt-5 grid gap-4">
+                <Drop over={over} busy={busy}><input className="sr-only" type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />
+                  <span className="text-lg font-medium">{busy === 'sell' ? (prog || 'Uploading...') : 'Drop photos or tap to add'}</span>
+                  <span className="text-sm text-muted-foreground">Each photo becomes a listing</span></Drop>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button asChild size="lg" variant="brand" className={cn('w-full', busy && 'pointer-events-none opacity-50')}><label><input className="sr-only" type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? (prog || 'Uploading...') : 'Take photo'}</label></Button>
+                  <Button asChild size="lg" variant="secondary" className={cn('w-full', busy && 'pointer-events-none opacity-50')}><label><input className="sr-only" type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Attach photos</label></Button>
                 </div>
-                <div className="chips">{['Headphones', 'Game console', 'Office chair', 'Old iPhone'].map((t) => <span key={t} className="chip0 hintchip">{t}</span>)}</div>
-              </> : <form onSubmit={buy}>
-                <div className="bigbox buybox">
-                  <input className="bbin" placeholder="What do you want? e.g. Herman Miller chair" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
-                  <div className="bbrow">
-                    <input className="field" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />
-                    <button className="pill blue" disabled={!!busy}>{busy === 'buy' ? 'Starting...' : 'Find deals'}</button>
-                  </div>
+                <div className="flex flex-wrap gap-2">{['Headphones', 'Game console', 'Office chair', 'Old iPhone'].map((t) => <Badge key={t} variant="outline" className="border-border/70 px-3 py-1 font-normal text-muted-foreground">{t}</Badge>)}</div>
+              </div> : <form onSubmit={buy} className="mt-5 grid gap-4">
+                <Input className="h-14 rounded-2xl px-5 text-lg" placeholder="What do you want? e.g. Herman Miller chair" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
+                <div className="flex gap-3">
+                  <Input className="h-12 w-32 shrink-0" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />
+                  <Button size="lg" variant="brand" className="flex-1" disabled={!!busy}>{busy === 'buy' ? 'Starting...' : 'Find deals'}</Button>
                 </div>
-                <div className="chips">{['Used Mac with Apple silicon under $500', 'Herman Miller chair to flip', 'Nintendo Switch under $200', 'Road bike under $300'].map((t) => <button type="button" key={t} className="chip0 btn" onClick={() => setQ(t)}>{t}</button>)}</div>
+                <div className="flex flex-wrap gap-2">{['Used Mac with Apple silicon under $500', 'Herman Miller chair to flip', 'Nintendo Switch under $200', 'Road bike under $300'].map((t) => <Button type="button" key={t} variant="outline" size="sm" className="h-8 border-border/70 px-3 text-xs font-normal text-muted-foreground" onClick={() => setQ(t)}>{t}</Button>)}</div>
               </form>}
-            </div>
-            {err && <p className="err">{err}</p>}
-            <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Your money, live</small></span><i>→</i></a>
+            </Card>
+            {err && <p className="text-sm text-red-400">{err}</p>}
+            <a href="/dashboard" className="group flex items-center justify-between rounded-2xl border border-border/70 px-5 py-4 transition-colors hover:bg-accent/40">
+              <span className="flex flex-col"><span className="font-medium">Dashboard</span><span className="text-sm text-muted-foreground">Your money, live</span></span>
+              <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-0.5" /></a>
           </div>
         </div>
         {!initMode && (real && real.length >= 3 ? <MarketViz key="real" items={real} real /> : <MarketViz key="ex" items={EXAMPLES} />)}
-      </div>{!initMode && <div className="wrap"><GarageScene /></div>}</section>
+      </div>{!initMode && <div className="wrap mt-16"><GarageScene /></div>}</section>
       {initMode && <ModeFeed mode={initMode} />}
 
-      {!initMode && <section id="how" className="sec"><div className="wrap">
-        <h2>How it works</h2>
-        <div className="steps">
-          <div className="card"><div className="n">1</div><h4>Identify</h4><p>What is it?</p></div>
-          <div className="card"><div className="n">2</div><h4>Price</h4><p>What is it worth?</p></div>
-          <div className="card"><div className="n">3</div><h4>Write</h4><p>Title, price, details.</p></div>
-          <div className="card"><div className="n">4</div><h4>Approve</h4><p>You say yes.</p></div>
-          <div className="card"><div className="n">5</div><h4>Live</h4><p>On Marketplace.</p></div>
+      {!initMode && <section id="how" className="py-24"><div className="wrap">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="!text-4xl !font-semibold !tracking-tight md:!text-6xl">How it works</h2>
         </div>
-        <div className="steps" style={{ marginTop: 14 }}>
-          <div className="card"><span className="tag">Buy</span><h4>Scouts find deals</h4><p>Cheap finds near you.</p></div>
+        <div className="mt-14 grid grid-cols-2 gap-4 md:grid-cols-5">
+          {howSteps.map(([n, t, p]) => <Card key={n} className="border-border/60 p-6">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-sm font-medium">{n}</div>
+            <div className="mt-6 text-lg font-semibold">{t}</div><p className="mt-1 text-sm text-muted-foreground">{p}</p></Card>)}
         </div>
-        <div className="about">
-          <h3>About</h3>
-          <p className="aboutline">Snap it. Grok Bot sells it.</p>
-          <div className="feats">
-            <div className="card"><h4>Photo to listing</h4></div>
-            <div className="card"><h4>Honest item ID</h4></div>
-            <div className="card"><h4>Real prices</h4></div>
-            <div className="card"><h4>24/7 deal scout</h4></div>
-            <div className="card"><h4>Profit dashboard</h4></div>
-            <div className="card"><h4>Buyer replies drafted</h4></div>
-            <div className="card"><h4>You approve everything</h4></div>
-          </div>
-          <div className="card credits">
+        <Card className="mt-4 flex items-center gap-4 border-border/60 p-6">
+          <Badge variant="brand">Buy</Badge><div><div className="text-lg font-semibold">Scouts find deals</div><p className="text-sm text-muted-foreground">Cheap finds near you.</p></div>
+        </Card>
+        <div className="mt-28">
+          <h3 className="text-sm font-medium uppercase tracking-widest text-muted-foreground">About</h3>
+          <p className="mt-3 text-3xl font-semibold tracking-tight md:text-5xl">Snap it. Grok Bot sells it.</p>
+          <div className="mt-10 flex flex-wrap gap-2">{feats.map((f) => <Badge key={f} variant="secondary" className="px-4 py-2 text-sm font-normal">{f}</Badge>)}</div>
+          <Separator className="my-12" />
+          <div className="grid gap-3 text-sm text-muted-foreground [&_a]:text-foreground [&_a]:underline-offset-4 hover:[&_a]:underline [&_b]:font-medium [&_b]:text-foreground">
             <p><b>Built in 2.5 hours with Grok Bot.</b></p>
             <p><b>Built at</b> <a href="https://luma.com/x0qss5av?tk=Mdaf1N" target="_blank" rel="noreferrer">Grok Bot Hackathon</a>, Austin, TX, Oct 19, 2026</p>
             <p><b>Team</b> <a href="https://adampang.com" target="_blank" rel="noreferrer">Adam Pang</a> (<a href="https://github.com/adamtpang" target="_blank" rel="noreferrer">GitHub</a>), Pranav, Isaac</p>

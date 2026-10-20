@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Photo from './Photo';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 const $ = (v) => '$' + Number(v || 0).toLocaleString(undefined, { maximumFractionDigits: 0 });
 export default function ModeFeed({ mode }) {
   const [items, setItems] = useState(null);
@@ -19,12 +21,13 @@ export default function ModeFeed({ mode }) {
       } catch (e) { setItems([]); }
     })();
   }, [mode]);
-  return <section className="sec mfeed"><div className="wrap">
-    <div className="mfh"><h2>{mode === 'sell' ? 'Live now' : 'Top flips'}</h2><a className="pill gray sm0" href="/dashboard">Dashboard</a></div>
-    {items === null ? <p className="muted">Loading...</p> : items.length === 0 ? <p className="muted">{mode === 'sell' ? 'No live listings yet.' : 'No flips found yet.'}</p> :
-      <div className="mgrid">{items.map((x) => <a key={x.key} className="mcard" href={x.href}>
-        <span className="mph"><Photo src={x.photo} title={x.title} fb={x.fb} /></span>
-        <span className="mtx"><b className="mp">{x.top}</b><span className="mt">{x.title}</span><small className={mode === 'sell' ? 'mlive' : 'mprof'}>{x.sub}</small></span>
-      </a>)}</div>}
+  return <section className="pb-8 pt-8"><div className="wrap">
+    <div className="mb-6 flex items-center justify-between"><h2 className="!text-3xl !font-semibold !tracking-tight">{mode === 'sell' ? 'Live now' : 'Top flips'}</h2><Button asChild variant="secondary" size="sm"><a href="/dashboard">Dashboard</a></Button></div>
+    {items === null ? <p className="text-muted-foreground">Loading...</p> : items.length === 0 ? <p className="text-muted-foreground">{mode === 'sell' ? 'No live listings yet.' : 'No flips found yet.'}</p> :
+      <div className="grid grid-cols-2 gap-4 md:grid-cols-4">{items.map((x) => <a key={x.key} href={x.href} className="group">
+        <Card className="overflow-hidden border-border/60 transition-colors group-hover:border-muted-foreground/40">
+          <span className="block aspect-square overflow-hidden bg-secondary [&>img]:h-full [&>img]:w-full [&>img]:object-cover [&>img]:transition-transform [&>img]:duration-500 group-hover:[&>img]:scale-[1.03]"><Photo src={x.photo} title={x.title} fb={x.fb} /></span>
+          <span className="block p-4"><b className="block text-lg font-semibold">{x.top}</b><span className="block truncate text-sm text-muted-foreground">{x.title}</span><small className={'mt-1 block text-xs ' + (mode === 'sell' ? 'text-success' : 'text-success')}>{x.sub}</small></span>
+        </Card></a>)}</div>}
   </div></section>;
 }
