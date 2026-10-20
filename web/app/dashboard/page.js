@@ -59,8 +59,7 @@ export default function Dashboard() {
   const level = Math.floor(xp / 250) + 1, into = xp % 250;
   return <main className="wrap dash">
     <section className="mot">
-      <div><p className="eyebrow">Money on the table</p><div className="motv"><Tick value={sellTotal + profitTotal} /></div>
-        <p className="muted small">Recommended prices of your items plus estimated profit on scouted deals.</p></div>
+      <div><p className="eyebrow">Money on the table</p><div className="motv"><Tick value={sellTotal + profitTotal} /></div></div>
       <div className="motk">
         <div><span>Your items</span><b><Tick value={sellTotal} /></b><small>{sells.length} listing{sells.length === 1 ? '' : 's'}</small></div>
         <div><span>Deal profit</span><b className="green"><Tick value={profitTotal} /></b><small>{deals.length} deal{deals.length === 1 ? '' : 's'}</small></div>
@@ -88,7 +87,7 @@ export default function Dashboard() {
       </section>
       <section className="bcol"><div className="bh"><h2>Buy</h2><a className="pill gray sm0" href="/#buy">Find deals</a></div>
         {feed === null && <div className="empty">Loading...</div>}
-        {feed !== null && deals.length === 0 && <div className="empty">No deals yet. Scouts post here as they find them.</div>}
+        {feed !== null && deals.length === 0 && <div className="empty">No deals yet.</div>}
         {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade tcard" style={{ animationDelay: `${k * 50}ms` }}>
           <a className="tph" href={d._href}><Photo src={photo} title={d.title} fb={(d.fb_url || d.source_url || d.link || d.url)} /></a><div className="tbody">
           <a className="it" href={d._href}><span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}<i className="arrow">›</i></a>
@@ -102,9 +101,9 @@ export default function Dashboard() {
       </section>
     </div>
     <section className="howflip"><h2>How to flip IRL</h2><div className="hf">
-      <div><i>1</i><b>Message the seller</b><p>Tap Buy here, say it is still available and offer the asking price or a little under.</p></div>
-      <div><i>2</i><b>Pick it up</b><p>Meet somewhere public, check it works, pay cash or with a payment app.</p></div>
-      <div><i>3</i><b>List it with Garage Sale</b><p>Snap a photo on the <a href="/#sell">Sell</a> page. Grok Bot prices it from the Sell here comps and posts it for you.</p></div>
+      <div><i>1</i><b>Message the seller</b></div>
+      <div><i>2</i><b>Pick it up</b></div>
+      <div><i>3</i><b><a href="/#sell">Snap it to resell</a></b></div>
     </div></section>
   </main>;
 }

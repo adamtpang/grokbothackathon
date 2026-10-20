@@ -137,8 +137,8 @@ export default function Home() {
       <section className="hero"><div className="wrap hgrid">
         <div>
           <p className="eyebrow desk-only">Garage Sale · Grok Bot Hackathon · Austin</p>
-          <h1><span className="desk-only">AI agents that buy and sell on Marketplace for you.</span><span className="mob-only">Snap it.<br /><span style={{ color: "var(--blue2)" }}>Sold.</span></span></h1>
-          <p className="sub mob-sub">AI agents sell your stuff on Marketplace.</p><p className="sub desk-only">Snap a photo and Grok Bot agents identify it, research real prices, write the listing, and post it to Facebook Marketplace once you approve. Or tell them what you want and they hunt for under-market deals.</p>
+          <h1>Snap it. <span style={{ color: "var(--blue2)" }}>Grok Bot sells it.</span></h1>
+          <p className="sub">Photo in, Facebook Marketplace listing out. You approve every step.</p>
           <div className="actions">
             <div id="sell" className={'act drag' + (over ? ' over' : '')}
               onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
@@ -149,11 +149,11 @@ export default function Home() {
                 <label className="pill gray big"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Upload photos</label>
               </div>
               <div className="chips"><span className="chip0">Try: snap your headphones, a mouse, a game console</span></div>
-              <p className="hint desk-only">Moving out? Pick many photos at once and each one becomes its own listing. On desktop you can drop images here.</p>
+              <p className="hint desk-only">Many photos? Each one becomes a listing.</p>
             </div>
             <form id="buy" className="act" onSubmit={buy}>
               <h3>Buy</h3>
-              <div className="bubble desk-only"><span className="gbi sm" style={{ display: 'inline-block', verticalAlign: '-4px', marginRight: 8 }} />What do you want to buy? I will scout Austin Marketplace and compare prices.</div>
+              <div className="bubble desk-only"><span className="gbi sm" style={{ display: 'inline-block', verticalAlign: '-4px', marginRight: 8 }} />What do you want? I will find deals.</div>
               <div className="buyform">
                 <input className="field" placeholder="e.g. Herman Miller chair" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
                 <input className="field" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />
@@ -162,7 +162,7 @@ export default function Home() {
               <div className="chips">{['Used Mac with Apple silicon under $500', 'Herman Miller chair to flip', 'Nintendo Switch under $200', 'Road bike under $300'].map((t) => <button type="button" key={t} className="chip0 btn" onClick={() => setQ(t)}>{t}</button>)}</div>
             </form>
             {err && <p className="err">{err}</p>}
-            <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Money on the table, live</small></span><i>→</i></a>
+            <a href="/dashboard" className="dashcta"><span><b>Dashboard</b><small>Your money, live</small></span><i>→</i></a>
           </div>
         </div>
         {real && real.length >= 3 ? <MarketViz key="real" items={real} real /> : <MarketViz key="ex" items={EXAMPLES} />}
@@ -171,26 +171,26 @@ export default function Home() {
       <section id="how" className="sec"><div className="wrap">
         <h2>How it works</h2>
         <div className="steps">
-          <div className="card"><div className="n">1</div><h4>Identify</h4><p>A vision agent works out what the item is: brand, model and condition.</p></div>
-          <div className="card"><div className="n">2</div><h4>Research prices</h4><p>Local Marketplace comps first. If there are fewer than 3, it widens to eBay sold, Amazon and other platforms.</p></div>
-          <div className="card"><div className="n">3</div><h4>Write listing</h4><p>A detailed title, description and price grounded in the comps.</p></div>
-          <div className="card"><div className="n">4</div><h4>Approve</h4><p>You review it and press approve. Nothing posts without you.</p></div>
-          <div className="card"><div className="n">5</div><h4>Live</h4><p>Posted to Facebook Marketplace, with a QR code so you can check the real listing.</p></div>
+          <div className="card"><div className="n">1</div><h4>Identify</h4><p>What is it?</p></div>
+          <div className="card"><div className="n">2</div><h4>Price</h4><p>What is it worth?</p></div>
+          <div className="card"><div className="n">3</div><h4>Write</h4><p>Title, price, details.</p></div>
+          <div className="card"><div className="n">4</div><h4>Approve</h4><p>You say yes.</p></div>
+          <div className="card"><div className="n">5</div><h4>Live</h4><p>On Marketplace.</p></div>
         </div>
         <div className="steps" style={{ marginTop: 14 }}>
-          <div className="card"><span className="tag">Buy</span><h4>Scouts find deals</h4><p>Agents scan Austin listings for what you want, compare each one against eBay sold, Amazon and others, and show the under-market ones with the comps to prove it.</p></div>
+          <div className="card"><span className="tag">Buy</span><h4>Scouts find deals</h4><p>Cheap finds near you.</p></div>
         </div>
         <div className="about">
           <h3>About</h3>
-          <p className="aboutline">Snap a photo of anything you own. Grok Bot prices it and posts it on Facebook Marketplace for you.</p>
+          <p className="aboutline">Snap it. Grok Bot sells it.</p>
           <div className="feats">
-            <div className="card"><h4>Photo to live FB listing</h4><p>Grok Bot's computer fills every field from your account.</p></div>
-            <div className="card"><h4>Honest ID</h4><p>Confidence %, and it asks for a retake if unsure.</p></div>
-            <div className="card"><h4>Real price research</h4><p>Austin FB comps plus other platforms.</p></div>
-            <div className="card"><h4>24/7 deal scout</h4><p>Runs every 30 min. Only profitable flips, with spread %.</p></div>
-            <div className="card"><h4>Trader dashboard</h4><p>Money on the table, profit, level.</p></div>
-            <div className="card"><h4>Buyer replies drafted</h4><p>With a public pickup spot.</p></div>
-            <div className="card"><h4>You approve every step</h4><p>Nothing happens without you.</p></div>
+            <div className="card"><h4>Photo to listing</h4></div>
+            <div className="card"><h4>Honest item ID</h4></div>
+            <div className="card"><h4>Real prices</h4></div>
+            <div className="card"><h4>24/7 deal scout</h4></div>
+            <div className="card"><h4>Profit dashboard</h4></div>
+            <div className="card"><h4>Buyer replies drafted</h4></div>
+            <div className="card"><h4>You approve everything</h4></div>
           </div>
           <div className="card credits">
             <p><b>Built in 2.5 hours with Grok Bot.</b></p>
