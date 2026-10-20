@@ -331,3 +331,10 @@ h1{letter-spacing:-.02em}
 @media(max-width:600px){.dc2 .dbody{padding:10px;gap:6px}.dc2 .dprice{font-size:20px}.dc2 .dt{font-size:13px}.dflip{grid-template-columns:1fr}.dflip .leg{padding:5px 8px}.dflip .leg b{font-size:13px}.dc2 .pchip.big{font-size:16px;padding:6px 10px}}
 /* v8 placeholder centering */
 .tcard .tph .phx,.dimg .phx{display:grid;place-items:center;font-size:44px}
+/* v8 mobile polish */
+@media(max-width:600px){
+
+.trader{grid-template-columns:repeat(3,1fr);row-gap:12px}.trader .tav{justify-self:start}.trader .tinfo{grid-column:2/-1}.trader .tstat{grid-column:auto}.trader .tstat b{font-size:19px}
+.trow .rg{color:var(--dim);font-size:12px}
+}
+.chips span.chip0:not(.btn){background:transparent;border:0;padding:4px 2px;color:var(--dim);font-size:13px}
