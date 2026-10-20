@@ -1,4 +1,4 @@
-import { saveJob, uploadImage, addLog, fireWebhook, noteWebhook, newId, now, json } from '../../../lib/store';
+import { saveJob, uploadImage, addLog, fireWebhook, markPending, indexPending, newId, now, json } from '../../../lib/store';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30;
 
@@ -29,10 +29,10 @@ export async function POST(req) {
       if (body.max_price !== undefined && body.max_price !== null && body.max_price !== '' && isFinite(mp)) job.max_price = mp;
       addLog(job, `Buy request received: "${job.query}"${job.max_price ? ` under $${job.max_price}` : ''}`);
     }
-    if (!process.env.GST_WEBHOOK_URL) addLog(job, 'Waiting for worker');
+    markPending(job, 'created');
     await saveJob(job);
-    const res = await fireWebhook(job, 'created');
-    await noteWebhook(id, 'created', res);
+    await indexPending(job, 'created');
+    await fireWebhook(job, 'created');
     return json({ id });
   } catch (e) {
     return json({ error: 'failed to create job', detail: String(e.message || e) }, 500);

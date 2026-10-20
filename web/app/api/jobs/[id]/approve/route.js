@@ -1,4 +1,4 @@
-import { getJob, saveJob, addLog, fireWebhook, noteWebhook, json } from '../../../../../lib/store';
+import { getJob, saveJob, addLog, fireWebhook, markPending, indexPending, json } from '../../../../../lib/store';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req, { params }) {
@@ -14,9 +14,9 @@ export async function POST(req, { params }) {
     if (job.results && job.results.listing) job.results.listing.price = price;
   }
   addLog(job, `Approved by seller${job.approved_price !== undefined ? ` at $${job.approved_price}` : ''}. Posting next`, 'approved');
-  if (!process.env.GST_WEBHOOK_URL) addLog(job, 'Waiting for worker', 'approved');
+  markPending(job, 'approved');
   await saveJob(job);
-  const res = await fireWebhook(job, 'approved', job.approved_price !== undefined ? { price: job.approved_price } : {});
-  await noteWebhook(job.id, 'approved', res);
+  await indexPending(job, 'approved');
+  await fireWebhook(job, 'approved', job.approved_price !== undefined ? { price: job.approved_price } : {});
   return json(job);
 }

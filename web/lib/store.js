@@ -45,9 +45,12 @@ export function addLog(job, message, stage, source = 'app') {
   job.logs.push({ ts: now(), stage: stage || job.stage, message: String(message), source });
 }
 
+function validUrl(u) { try { const x = new URL(u); return x.protocol === 'https:' || x.protocol === 'http:'; } catch (e) { return false; } }
+
+// Optional direct webhook. Skips silently when GST_WEBHOOK_URL is missing or invalid.
 export async function fireWebhook(job, event, extra = {}) {
   const url = process.env.GST_WEBHOOK_URL;
-  if (!url) return { skipped: true };
+  if (!url || !validUrl(url)) return { skipped: true };
   const header = process.env.GST_WEBHOOK_HEADER || 'Authorization';
   const pfx = process.env.GST_WEBHOOK_PREFIX ?? 'Bearer ';
   const headers = { 'content-type': 'application/json' };
@@ -55,30 +58,36 @@ export async function fireWebhook(job, event, extra = {}) {
   const ac = new AbortController();
   const t = setTimeout(() => ac.abort(), 3000);
   try {
-    const r = await fetch(url, {
-      method: 'POST', headers, signal: ac.signal,
-      body: JSON.stringify({ job_id: job.id, kind: job.kind, event, ...extra }),
-    });
+    const r = await fetch(url, { method: 'POST', headers, signal: ac.signal, body: JSON.stringify({ job_id: job.id, kind: job.kind, event, ...extra }) });
     return { ok: r.ok, status: r.status };
-  } catch (e) {
-    return { ok: false, error: e.name === 'AbortError' ? 'timeout' : String((e.cause && e.cause.code) || e.name || 'error') };
-  } finally {
-    clearTimeout(t);
-  }
+  } catch (e) { return { ok: false }; } finally { clearTimeout(t); }
 }
 
-// After a webhook attempt, record the outcome without clobbering worker updates.
-export async function noteWebhook(id, event, res) {
-  if (res.skipped || res.ok) return;
-  try {
-    const job = await getJob(id);
-    if (!job) return;
-    addLog(job, res.error === 'timeout'
-      ? `Worker notified (${event}); it is still starting up`
-      : `Could not reach the worker for "${event}" (${res.status || res.error}). Waiting for worker`);
-    await saveJob(job);
-  } catch (e) {}
+// Pending queue for the relay: index blobs at pending/<id>__<kind>__<event>.json
+export function markPending(job, event) {
+  job.pending_event = event;
+  job.pending_at = now();
+  addLog(job, 'Queued for the Grok Bot worker');
 }
+export async function indexPending(job, event) {
+  await put(`pending/${job.id}__${job.kind}__${event}.json`, JSON.stringify({ job_id: job.id, kind: job.kind, event, at: now() }), {
+    access: 'public', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60,
+  });
+}
+export async function listPending() {
+  const { blobs } = await list({ prefix: 'pending/', limit: 1000 });
+  return blobs.map((b) => {
+    const m = b.pathname.match(/^pending\/([a-z0-9]+)__([a-z]+)__([a-z_]+)\.json$/i);
+    return m ? { job_id: m[1], kind: m[2], event: m[3], at: b.uploadedAt } : null;
+  }).filter(Boolean);
+}
+export async function clearPending(id, event) {
+  const { blobs } = await list({ prefix: `pending/${id}__`, limit: 100 });
+  const urls = blobs.filter((b) => !event || b.pathname.endsWith(`__${event}.json`)).map((b) => b.url);
+  if (urls.length) await del(urls);
+  return urls.length;
+}
+export const workerOk = (req) => !!process.env.GST_WORKER_KEY && req.headers.get('x-worker-key') === process.env.GST_WORKER_KEY;
 
 export const json = (data, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { 'content-type': 'application/json', 'cache-control': 'no-store', 'access-control-allow-origin': '*' } });
