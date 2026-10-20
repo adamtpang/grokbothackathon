@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import GarageScene from '../components/GarageScene';
-import { prox } from '../components/Photo';
+import Photo, { prox } from '../components/Photo';
 
 const TILES = [
   ['chair', 'Ergonomic office chair', 140, 260], ['airpods', 'AirPods Pro', 95, 160], ['lamp', 'Desk lamp', 15, 30], ['guitar', 'Acoustic guitar', 120, 210],
@@ -60,7 +60,7 @@ function MarketViz({ items, real }) {
         {items.map((it, i) => (
           <div key={i} className={'t' + (scan.includes(i) ? ' scan' : '')}>
             <a className="ph" href={it.href || it.link || undefined} target={!it.href && it.link ? '_blank' : undefined} rel="noopener">
-              {it.photo && !it.bad ? <img src={real ? prox(it.photo) : it.photo} alt={it.name} loading={i < 4 ? 'eager' : 'lazy'} onError={(e) => { e.currentTarget.replaceWith(Object.assign(document.createElement('div'), { className: 'noph', textContent: it.name })); }} /> : <div className="noph">{it.name}</div>}
+              {real ? <Photo src={it.photo} title={it.name} fb={it.link} /> : <img src={it.photo} alt={it.name} loading="eager" />}
               {real ? <span className="realtag">Real</span> : <span className="extag">Example</span>}
               {it.mkt ? <div className="cmp">${it.ask} vs <b>${it.mkt}</b> market</div> : null}
             </a>
