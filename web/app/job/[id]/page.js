@@ -72,6 +72,15 @@ export default function JobPage({ params }) {
   const [approving, setApproving] = useState(false);
   const [tick, setTick] = useState(Date.now());
   const priceTouched = useRef(false);
+  const [spot, setSpot] = useState(''); const [times, setTimes] = useState('');
+  const [ans, setAns] = useState(''); const [sending, setSending] = useState('');
+  const [drafts, setDrafts] = useState({});
+  async function post(url, body) {
+    const r = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body || {}) });
+    const j = await r.json(); if (r.ok) setJob(j); else setErr(j.error || 'Request failed'); return r.ok;
+  }
+  async function answer(e) { e.preventDefault(); if (!ans.trim()) return; setSending('answer'); if (await post(`/api/jobs/${id}/answer`, { answer: ans.trim() })) setAns(''); setSending(''); }
+  async function sendReply(q) { setSending(q.id); await post(`/api/jobs/${id}/replies/${encodeURIComponent(q.id)}/approve`, { text: drafts[q.id] ?? q.draft_reply }); setSending(''); }
 
   useEffect(() => {
     let stop = false;
@@ -97,7 +106,7 @@ export default function JobPage({ params }) {
   async function approve() {
     setApproving(true);
     try {
-      const r = await fetch(`/api/jobs/${id}/approve`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(price !== '' ? { price: Number(price) } : {}) });
+      const r = await fetch(`/api/jobs/${id}/approve`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ ...(price !== '' ? { price: Number(price) } : {}), ...(spot || times ? { pickup: { spot: spot || 'A public spot near you, like a coffee shop', times } } : {}) }) });
       const j = await r.json(); if (r.ok) setJob(j); else setErr(j.error || 'Approve failed');
     } finally { setApproving(false); }
   }
@@ -111,51 +120,75 @@ export default function JobPage({ params }) {
   const idf = R.identification;
   const comps = Array.isArray(R.comps) ? R.comps : [];
 
-  return <main className="wrap">
+  const stages = STAGES[job.kind] || STAGES.sell;
+  const si = Math.max(0, stages.indexOf(job.stage));
+  const doneAll = job.stage === 'live' || job.stage === 'done';
+  const awaiting = job.stage === 'awaiting_approval' && job.kind === 'sell';
+  const inqs = Array.isArray(job.inquiries) ? job.inquiries : [];
+  const title = job.kind === 'buy' ? `${job.query}${job.max_price ? ` under ${money(job.max_price)}` : ''}` : (R.listing && R.listing.title) || (idf && idf.name) || 'Your item';
+  return <main className={'wrap jobmain' + (awaiting ? ' has-sticky' : '')}>
     <div className="jobhead">
-      <div><p className="eyebrow">{job.kind === 'buy' ? 'Buy request' : 'Sell job'}{job.test ? ' · test (not sent to worker)' : ''}{job.batch_id ? <> · <a href={`/batch/${job.batch_id}`} style={{ textDecoration: 'underline' }}>batch</a></> : null}</p>
-        <h1>{job.kind === 'buy' ? `Finding: ${job.query}${job.max_price ? ` under ${money(job.max_price)}` : ''}` : (R.listing && R.listing.title) || (idf && idf.name) || 'Selling your item'}</h1></div>
+      <div><p className="eyebrow">{job.kind === 'buy' ? 'Buying' : 'Selling'}{job.test ? ' · test' : ''}{job.batch_id ? <> · <a href={`/batch/${job.batch_id}`} style={{ textDecoration: 'underline' }}>batch</a></> : null}</p>
+        <h1>{title}</h1></div>
       <span className="jid">job {job.id}</span>
     </div>
-    <Stepper kind={job.kind} stage={job.stage} />
-    {!workerSeen && <div className="wait"><span className="spin" /><div>Grok Bot worker is picking this up...
-      {age > 60 && <small>The worker is still starting. This can take a minute; this page updates on its own.</small>}</div></div>}
+    <div className="desk-only"><Stepper kind={job.kind} stage={job.stage} /></div>
+    <div className="mprog mob-only"><div className="mprow"><b>{LABEL[job.stage] || job.stage}</b><span>{si + 1}/{stages.length}</span></div>
+      <div className="mbar"><i style={{ width: `${doneAll ? 100 : Math.max(6, ((si + 0.5) / stages.length) * 100)}%` }} /></div></div>
+    {!workerSeen && <div className="wait"><span className="spin" /><div>Grok Bot is picking this up...
+      {age > 60 && <small>Still starting. This page updates on its own.</small>}</div></div>}
     {err && <p className="err">{err}</p>}
 
     <div className="jgrid">
       <div className="col">
-        {job.stage === 'awaiting_approval' && job.kind === 'sell' && <div className="panel approve">
+        {job.question && <div className="panel qpanel o1"><h3>Grok Bot needs a detail</h3>
+          <p style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>{job.question.message}</p>
+          <form className="row" onSubmit={answer}><input className="field" style={{ flex: '1 1 200px' }} value={ans} onChange={(e) => setAns(e.target.value)} placeholder={job.question.field || 'Your answer'} aria-label="Answer" />
+            <button className="pill blue" disabled={sending === 'answer'}>{sending === 'answer' ? 'Sending...' : 'Send'}</button></form></div>}
+        {awaiting && <div className="panel approve o4">
           <h3>Ready to post</h3>
-          <p className="muted" style={{ marginBottom: 14 }}>Check the listing below. Adjust the price if you like, then approve.</p>
-          <div className="row">
-            <input className="field" inputMode="decimal" value={price} onChange={(e) => { priceTouched.current = true; setPrice(e.target.value.replace(/[^0-9.]/g, '')); }} aria-label="Price" placeholder="$" />
-            <button className="pill blue big" onClick={approve} disabled={approving}>{approving ? 'Approving...' : 'Approve and post to Marketplace'}</button>
+          <div className="prow">
+            <input className="field" value={spot} onChange={(e) => setSpot(e.target.value)} placeholder="Pickup spot: a public spot near you, like a coffee shop" aria-label="Pickup spot" />
+            <input className="field" value={times} onChange={(e) => setTimes(e.target.value)} placeholder="Available times, e.g. weekdays after 6" aria-label="Available times" />
+          </div>
+          <div className="arow">
+            <input className="field pricef" inputMode="decimal" value={price} onChange={(e) => { priceTouched.current = true; setPrice(e.target.value.replace(/[^0-9.]/g, '')); }} aria-label="Price" placeholder="$" />
+            <button className="pill blue big" onClick={approve} disabled={approving}>{approving ? 'Approving...' : 'Approve & post'}</button>
           </div>
         </div>}
-        {listingUrl && <div className="panel livep">
+        {listingUrl && <div className="panel livep o0">
           <h3 style={{ justifyContent: 'center' }}>Live on Marketplace</h3>
-          <a className="pill blue big" href={listingUrl} target="_blank" rel="noopener">Open the listing</a>
+          <a className="pill blue big" href={listingUrl} target="_blank" rel="noopener">Open listing</a>
           <img src={`https://api.qrserver.com/v1/create-qr-code/?size=440x440&margin=0&data=${encodeURIComponent(listingUrl)}`} alt="QR code to the listing" />
           <p className="small muted" style={{ wordBreak: 'break-all' }}>{listingUrl}</p>
         </div>}
-        {R.listing && <div className="panel"><h3>Listing preview</h3><Listing l={R.listing} img={job.image_url} /></div>}
-        {job.kind === 'buy' && <div className="panel"><h3>Deals {deals.length > 0 && <span>{deals.length}</span>}</h3>
-          {deals.length === 0 ? <p className="muted">Scouts are looking. Deals appear here as they are found.</p> :
+        {inqs.length > 0 && <div className="panel o0b"><h3>Buyer messages <span>{inqs.length}</span></h3>
+          <div className="inqs">{inqs.map((q) => <div key={q.id} className="inq">
+            <div className="inqh"><b>{q.buyer_name}</b><span className={'ist ' + q.status}>{q.status}</span></div>
+            <div className="bmsg">{q.message}</div>
+            {q.status === 'drafted' ? <>
+              <textarea className="field ta" rows={3} value={drafts[q.id] ?? q.draft_reply} onChange={(e) => setDrafts({ ...drafts, [q.id]: e.target.value })} aria-label="Reply" />
+              <button className="pill blue sm" onClick={() => sendReply(q)} disabled={sending === q.id}>{sending === q.id ? 'Sending...' : 'Send reply'}</button>
+            </> : <div className="rmsg">{q.approved_text || q.draft_reply}</div>}
+          </div>)}</div></div>}
+        {R.listing && <div className="panel o3"><h3>Listing</h3><Listing l={R.listing} img={job.image_url} /></div>}
+        {job.kind === 'buy' && <div className="panel o2"><h3>Deals {deals.length > 0 && <span>{deals.length}</span>}</h3>
+          {deals.length === 0 ? <p className="muted">Scouting. Deals show up here.</p> :
             <div className="dgrid">{deals.map((d, k) => <DealCard key={k} d={d} example={!!job.test} />)}</div>}
         </div>}
-        {R.price && <div className="panel"><h3>Price research</h3><Price p={R.price} /></div>}
-        {comps.length > 0 && <div className="panel"><h3>Comparables <span>{comps.length}</span></h3><div className="comps">
+        {R.price && <div className="panel o2"><h3>Price</h3><Price p={R.price} /></div>}
+        {comps.length > 0 && <div className="panel o2b"><h3>Comps <span>{comps.length}</span></h3><div className="comps">
           {comps.map((c, k) => { const [b, cl] = badge(c.source); return <a key={k} className="comp" href={c.link || c.url || '#'} target="_blank" rel="noopener">
             <span className={'badge ' + cl}>{b}</span><div className="ct">{c.title}</div><div className="cp">{money(c.price)}</div></a>; })}
         </div></div>}
       </div>
       <div className="col">
-        {job.image_url && <div className="panel"><h3>Photo</h3><img className="photo" src={job.image_url} alt="Item photo" /></div>}
-        {idf && <div className="panel"><h3>Identification</h3><dl className="kv">
+        {job.image_url && <div className="panel o1a"><h3>Photo</h3><img className="photo" src={job.image_url} alt="Item photo" /></div>}
+        {idf && <div className="panel o1b"><h3>Identified</h3><dl className="kv">
           {['name', 'brand', 'model', 'condition'].map((k) => idf[k] ? [<dt key={k + 't'}>{k[0].toUpperCase() + k.slice(1)}</dt>, <dd key={k}>{String(idf[k])}</dd>] : null)}
           {idf.details && <><dt>Details</dt><dd>{typeof idf.details === 'string' ? idf.details : Array.isArray(idf.details) ? idf.details.join(', ') : JSON.stringify(idf.details)}</dd></>}
         </dl></div>}
-        <div className="panel"><h3>Live activity <span className="small">{logs.length} events</span></h3><Log logs={logs} active={!['live', 'done'].includes(job.stage)} /></div>
+        <div className="panel o9"><h3>Agent activity <span className="small">{logs.length}</span></h3><Log logs={logs} active={!doneAll} /></div>
       </div>
     </div>
   </main>;

@@ -1,4 +1,4 @@
-import { getJob, saveJob, addLog, fireWebhook, markPending, indexPending, json } from '../../../../../lib/store';
+import { getJob, addLog, queue, json } from '../../../../../lib/store';
 export const dynamic = 'force-dynamic';
 
 export async function POST(req, { params }) {
@@ -13,11 +13,9 @@ export async function POST(req, { params }) {
     job.approved_price = price;
     if (job.results && job.results.listing) job.results.listing.price = price;
   }
-  addLog(job, `Approved by seller${job.approved_price !== undefined ? ` at $${job.approved_price}` : ''}. Posting next`, 'approved');
-  if (job.test) { addLog(job, 'Test job: approval not queued for the worker', 'approved'); await saveJob(job); return json(job); }
-  markPending(job, 'approved');
-  await saveJob(job);
-  await indexPending(job, 'approved');
-  await fireWebhook(job, 'approved', job.approved_price !== undefined ? { price: job.approved_price } : {});
+  const pk = body && body.pickup;
+  if (pk && (pk.spot || pk.times)) job.pickup = { spot: String(pk.spot || '').slice(0, 200), times: String(pk.times || '').slice(0, 200) };
+  addLog(job, `Approved by seller${job.approved_price !== undefined ? ` at $${job.approved_price}` : ''}${job.pickup ? `. Pickup: ${job.pickup.spot || 'flexible'}${job.pickup.times ? `, ${job.pickup.times}` : ''}` : ''}`, 'approved');
+  await queue(job, 'approved', { price: job.approved_price ?? null, pickup: job.pickup || null });
   return json(job);
 }

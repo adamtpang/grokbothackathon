@@ -113,9 +113,9 @@ export default function Home() {
     <main>
       <section className="hero"><div className="wrap hgrid">
         <div>
-          <p className="eyebrow">Garage Sale · Grok Bot Hackathon · Austin</p>
-          <h1>AI agents that buy and sell on Marketplace for you.</h1>
-          <p className="sub">Snap a photo and Grok Bot agents identify it, research real prices, write the listing, and post it to Facebook Marketplace once you approve. Or tell them what you want and they hunt for under-market deals.</p>
+          <p className="eyebrow desk-only">Garage Sale · Grok Bot Hackathon · Austin</p>
+          <h1><span className="desk-only">AI agents that buy and sell on Marketplace for you.</span><span className="mob-only">Snap it.<br /><span style={{ color: "var(--blue2)" }}>Sold.</span></span></h1>
+          <p className="sub mob-sub">AI agents sell your stuff on Marketplace.</p><p className="sub desk-only">Snap a photo and Grok Bot agents identify it, research real prices, write the listing, and post it to Facebook Marketplace once you approve. Or tell them what you want and they hunt for under-market deals.</p>
           <div className="actions">
             <div id="sell" className={'act drag' + (over ? ' over' : '')}
               onDragOver={(e) => { e.preventDefault(); setOver(true); }} onDragLeave={() => setOver(false)}
@@ -125,11 +125,11 @@ export default function Home() {
                 <label className="pill blue big"><input type="file" accept="image/*" capture="environment" onChange={pick} disabled={!!busy} />{busy === 'sell' ? (prog || 'Uploading...') : 'Take photo'}</label>
                 <label className="pill gray big"><input type="file" accept="image/*" multiple onChange={pick} disabled={!!busy} />Upload photos</label>
               </div>
-              <p className="hint">Moving out? Pick many photos at once and each one becomes its own listing. On desktop you can drop images here.</p>
+              <p className="hint desk-only">Moving out? Pick many photos at once and each one becomes its own listing. On desktop you can drop images here.</p>
             </div>
             <form id="buy" className="act" onSubmit={buy}>
               <h3>Buy</h3>
-              <div className="bubble"><span className="gbi sm" style={{ display: 'inline-block', verticalAlign: '-4px', marginRight: 8 }} />What do you want to buy? I will scout Austin Marketplace and compare prices.</div>
+              <div className="bubble desk-only"><span className="gbi sm" style={{ display: 'inline-block', verticalAlign: '-4px', marginRight: 8 }} />What do you want to buy? I will scout Austin Marketplace and compare prices.</div>
               <div className="buyform">
                 <input className="field" placeholder="e.g. Herman Miller chair" value={q} onChange={(e) => setQ(e.target.value)} aria-label="What are you looking for?" />
                 <input className="field" placeholder="Max $" inputMode="decimal" value={max} onChange={(e) => setMax(e.target.value.replace(/[^0-9.]/g, ''))} aria-label="Max price" />

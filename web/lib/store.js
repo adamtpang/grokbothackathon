@@ -64,28 +64,46 @@ export async function fireWebhook(job, event, extra = {}) {
 }
 
 // Pending queue for the relay: index blobs at pending/<id>__<kind>__<event>.json
-export function markPending(job, event) {
+export function markPending(job, event, payload) {
   job.pending_event = event;
   job.pending_at = now();
+  if (payload !== undefined) job.pending_payload = payload; else delete job.pending_payload;
   addLog(job, 'Queued for the Grok Bot worker');
 }
-export async function indexPending(job, event) {
-  await put(`pending/${job.id}__${job.kind}__${event}.json`, JSON.stringify({ job_id: job.id, kind: job.kind, event, at: now() }), {
+const EV = /^[a-z_]{1,30}$/;
+export async function indexPending(job, event, payload) {
+  if (!EV.test(event)) throw new Error('bad event');
+  const nonce = Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  await put(`pending/${job.id}__${job.kind}__${event}__${nonce}.json`, JSON.stringify({ job_id: job.id, kind: job.kind, event, payload: payload ?? null, at: now() }), {
     access: 'public', contentType: 'application/json', addRandomSuffix: false, cacheControlMaxAge: 60,
   });
 }
 export async function listPending() {
   const { blobs } = await list({ prefix: 'pending/', limit: 1000 });
-  return blobs.map((b) => {
-    const m = b.pathname.match(/^pending\/([a-z0-9]+)__([a-z]+)__([a-z_]+)\.json$/i);
-    return m ? { job_id: m[1], kind: m[2], event: m[3], at: b.uploadedAt } : null;
-  }).filter(Boolean);
+  const items = await Promise.all(blobs.map(async (b) => {
+    const m = b.pathname.match(/^pending\/([a-z0-9]+)__([a-z]+)__([a-z_]+)(?:__([a-z0-9]+))?\.json$/i);
+    if (!m) return null;
+    let payload = null;
+    try { const r = await fetch(b.url, { cache: 'no-store' }); if (r.ok) payload = (await r.json()).payload ?? null; } catch (e) {}
+    return { job_id: m[1], kind: m[2], event: m[3], key: m[4] || '', payload, at: b.uploadedAt };
+  }));
+  return items.filter(Boolean);
 }
-export async function clearPending(id, event) {
+export async function clearPending(id, event, key) {
   const { blobs } = await list({ prefix: `pending/${id}__`, limit: 100 });
-  const urls = blobs.filter((b) => !event || b.pathname.endsWith(`__${event}.json`)).map((b) => b.url);
+  const urls = blobs.filter((b) => {
+    if (key) return b.pathname.endsWith(`__${key}.json`);
+    return !event || b.pathname.includes(`__${event}__`) || b.pathname.endsWith(`__${event}.json`);
+  }).map((b) => b.url);
   if (urls.length) await del(urls);
   return urls.length;
+}
+export async function queue(job, event, payload) {
+  if (job.test) { addLog(job, `Test job: "${event}" not queued for the worker`); await saveJob(job); return job; }
+  markPending(job, event, payload);
+  await saveJob(job);
+  await indexPending(job, event, payload);
+  return job;
 }
 export const isTest = (req, form) => req.headers.get('x-gst-test') === '1' || (form && String(form.get('test') || '') === '1');
 
