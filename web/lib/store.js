@@ -50,7 +50,7 @@ export async function recentJobs(limit = 30) {
     const part = await Promise.all(all.slice(i, i + 20).map((id) => getJob(id).catch(() => null)));
     jobs.push(...part.filter(Boolean));
   }
-  return jobs.filter((j) => !j.test).sort((a, b) => String(b.updated_at || b.created_at).localeCompare(String(a.updated_at || a.created_at))).slice(0, limit).map(summarize);
+  return jobs.filter((j) => !j.test).map(summarize).filter((s) => !/^test\b/i.test(String(s.title || ''))).sort((a, b) => String(b.updated_at || b.created_at).localeCompare(String(a.updated_at || a.created_at))).slice(0, limit);
 }
 
 export async function getJob(id) {
