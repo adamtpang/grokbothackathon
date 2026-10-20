@@ -49,7 +49,7 @@ export default function Dashboard() {
   const deals = [
     ...((feed && feed.deals) || []).map((d, i) => ({ ...d, _src: 'Scout feed', _ex: !!(feed.test || d.example), _href: `/deal/feed/${i}` })),
     ...buyJobs.filter((b) => b.stage === 'done').flatMap((b) => (b.deals || []).map((d, i) => ({ ...d, _src: `For "${b.title}"`, _job: b.id, _href: `/deal/${b.id}/${i}` }))),
-  ].map((d) => ({ ...d, _n: dealNums(d) })).sort((a, b) => (b._n.profit ?? -1e9) - (a._n.profit ?? -1e9));
+  ].map((d) => ({ ...d, _n: dealNums(d) })).filter((d) => d._n.profit !== null && d._n.profit > 0).sort((a, b) => (b._n.profit ?? -1e9) - (a._n.profit ?? -1e9));
   const sellTotal = sells.reduce((n, j) => n + (num(j.price) || 0), 0);
   const profitTotal = deals.filter((d) => !d._ex).reduce((n, d) => n + Math.max(0, dealNums(d).profit || 0), 0);
   const loading = jobs === null;
@@ -97,7 +97,7 @@ export default function Dashboard() {
             <i className="arrow">→</i>
             <a className="leg selll" href={n.sellUrl || undefined} target="_blank" rel="noopener"><span>Sell here</span><b>{n.resell !== null ? `${n.sellSrc} ${$(n.resell)}` : 'Check comps'}</b></a>
             <i className="arrow">=</i>
-            {n.profit !== null ? <em className={'pchip big' + (n.profit < 0 ? ' neg' : '')}>{n.profit >= 0 ? '+' : ''}{$(n.profit)}</em> : <em className="pchip big dim">?</em>}
+            {n.profit !== null ? <em className={'pchip big' + (n.profit < 0 ? ' neg' : '')}>{n.profit >= 0 ? '+' : ''}{$(n.profit)}{n.ask ? <small className="spct"> {Math.round((n.profit / n.ask) * 100)}%</small> : null}</em> : <em className="pchip big dim">?</em>}
           </div></div></div>; })}
       </section>
     </div>

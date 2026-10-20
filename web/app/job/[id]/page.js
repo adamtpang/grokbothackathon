@@ -154,7 +154,7 @@ export default function JobPage({ params }) {
   const workerSeen = logs.some((l) => l.source === 'worker') || job.stage !== 'received';
   const age = (tick - new Date(job.created_at).getTime()) / 1000;
   const listingUrl = job.listing_url || R.listing_url;
-  const deals = Array.isArray(R.deals) ? [...R.deals].sort((a, b) => Number(b.discount_pct || 0) - Number(a.discount_pct || 0)) : [];
+  const deals = Array.isArray(R.deals) ? [...R.deals].filter((d) => { const a = Number(d.ask_price ?? d.buy_price ?? d.price); const r = Number(d.resale_price ?? d.resell_price ?? d.est_market_price); const p = d.est_profit !== undefined && d.est_profit !== null && d.est_profit !== '' ? Number(d.est_profit) : r - a; return isFinite(p) && p > 0; }).sort((a, b) => Number(b.discount_pct || 0) - Number(a.discount_pct || 0)) : [];
   const idf = R.identification;
   const comps = Array.isArray(R.comps) ? R.comps : [];
   const conf = idf && idf.confidence !== undefined && idf.confidence !== null && !isNaN(Number(idf.confidence)) ? Math.max(0, Math.min(100, Number(idf.confidence) <= 1 && Number(idf.confidence) > 0 ? Number(idf.confidence) * 100 : Number(idf.confidence))) : null;
@@ -217,7 +217,7 @@ export default function JobPage({ params }) {
           </div>)}</div></div>}
         {R.listing && <div className="panel o3"><h3>Listing</h3><Listing l={R.listing} img={job.image_url} /></div>}
         {job.kind === 'buy' && <div className="panel o2"><h3>Deals {deals.length > 0 && <span>{deals.length}</span>}</h3>
-          {deals.length === 0 ? <p className="muted">Scouting. Deals show up here.</p> :
+          {deals.length === 0 ? <p className="muted">{job.stage === 'done' ? 'No profitable flips at current asking prices. The scout keeps looking every 30 minutes.' : 'Scouting. Deals show up here.'}</p> :
             <div className="dgrid">{deals.map((d, k) => <DealCard key={k} d={d} example={!!job.test} />)}</div>}
         </div>}
         {R.price && <div className="panel o2"><h3>Price</h3><Price p={R.price} /></div>}

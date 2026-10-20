@@ -300,3 +300,4 @@ h1{letter-spacing:-.02em}
 .eta{margin:10px 0 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
 .etar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:700;font-size:15px}.etar small{color:var(--muted);font-weight:500;font-size:12px}
 .etab{height:6px;border-radius:99px;background:#232428;overflow:hidden;margin-top:8px}.etab i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),#5ea0ff);transition:width 1s linear}
+.spct{font-size:.7em;opacity:.8;margin-left:4px;font-weight:600}
