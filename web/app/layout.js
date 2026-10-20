@@ -5,7 +5,6 @@ export const metadata = {
   title: 'Garage Sale · AI agents that buy and sell on Marketplace',
   applicationName: 'Garage Sale',
   description: 'Snap a photo to sell, or tell us what you want to buy. Grok Bot agents research real prices, write the listing, and find under-market deals on Facebook Marketplace.',
-  icons: { icon: [{ url: '/favicon.ico', sizes: 'any' }, { url: '/icon.svg', type: 'image/svg+xml' }], apple: '/apple-touch-icon.png' },
 };
 export const viewport = { themeColor: '#000000', width: 'device-width', initialScale: 1, viewportFit: 'cover' };
 export default function RootLayout({ children }) {
