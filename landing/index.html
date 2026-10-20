@@ -117,6 +117,22 @@ label.pill:focus-within{outline:3px solid var(--accent2);outline-offset:3px}
 .again{margin-top:14px}
 @media (max-width:760px){.flow{grid-template-columns:1fr}.flow li{display:grid;grid-template-columns:28px 1fr;column-gap:10px;padding:12px 14px}.flow li::before{grid-row:span 2;margin:0}.dt{display:none}}
 @media (prefers-reduced-motion:reduce){.flow li{transition:none}}
+
+@media (min-width:1024px){
+.hero{padding-top:56px}
+.hgrid{display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center;text-align:left}
+.hgrid h1{font-size:clamp(72px,7.4vw,124px)}
+.hgrid .lede{margin-inline:0;font-size:clamp(18px,1.6vw,23px)}
+.hgrid .pills{justify-content:flex-start}
+.hgrid .cap{margin:0}
+.hgrid .cap .drop{padding:40px 32px}
+.hgrid .cam{width:80px;height:80px;border-radius:24px;margin-bottom:20px}
+.hgrid .cbtn .pill{padding:16px 30px;font-size:17px}
+.hgrid .flow{grid-template-columns:1fr;gap:8px}
+.hgrid .flow li{display:grid;grid-template-columns:28px 1fr;column-gap:10px;padding:10px 14px}
+.hgrid .flow li::before{grid-row:span 2;margin:0}
+.hgrid .preview img{max-height:220px}
+}
 /* buy */
 .deals{grid-template-columns:repeat(auto-fit,minmax(290px,1fr));margin-top:72px}
 .deal{padding:30px}
@@ -167,10 +183,17 @@ footer a{color:var(--muted)}footer a:hover{color:var(--accent)}
 <main id="top">
 <section class="hero center">
   <div class="wrap">
+    <div class="hgrid">
+    <div class="hl">
     <p class="eyebrow rv">A Grok Bot Hackathon project · Austin</p>
     <h1 class="rv d1"><span class="grad">Snap it.</span><br><span class="green">Sold.</span></h1>
     <p class="lede rv d2">Snap a photo of anything. Grok Bots identify it, research real prices near you and across the internet, write the listing, and post it live to Facebook Marketplace <b>when you press A.</b></p>
 
+    <div class="pills rv d3">
+      <a class="pill primary" href="#sell">Sell</a>
+      <a class="pill ghost" href="#buy">Buy</a>
+    </div>
+    </div>
     <div class="cap" id="sell">
       <div class="drop" id="drop">
         <div class="empty">
@@ -197,9 +220,6 @@ footer a{color:var(--muted)}footer a:hover{color:var(--accent)}
         </div>
       </div>
     </div>
-    <div class="pills rv d3">
-      <a class="pill primary" href="#sell">Sell</a>
-      <a class="pill ghost" href="#buy">Buy</a>
     </div>
 
     <div class="town rv d4" aria-label="Illustration: a small town of five buildings with bots traveling between them">
