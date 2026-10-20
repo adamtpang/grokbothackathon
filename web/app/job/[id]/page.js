@@ -30,6 +30,32 @@ function AgentScreen({ snaps, active }) {
   </div>;
 }
 
+const EST = {
+  sell: { phases: [['received', 0], ['identifying', 30], ['researching', 120], ['writing', 30]], post: [['approved', 0], ['posting', 120]] },
+  buy: { phases: [['received', 0], ['scouting', 90], ['comparing', 90]] },
+};
+function Eta({ job }) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const e = EST[job.kind] || EST.sell;
+  const list = e.post && e.post.some(([s]) => s === job.stage) ? e.post : e.phases;
+  const i = list.findIndex(([s]) => s === job.stage);
+  if (i < 0) return null;
+  const logs = Array.isArray(job.logs) ? job.logs : [];
+  const first = logs.find((l) => l && l.stage === job.stage);
+  const start = new Date((first && first.ts) || job.updated_at || job.created_at).getTime();
+  const total = list.reduce((n, [, v]) => n + v, 0);
+  const before = list.slice(0, i).reduce((n, [, v]) => n + v, 0);
+  const curEst = list[i][1];
+  const inStage = Math.max(0, (now - start) / 1000);
+  const done = before + Math.min(inStage, curEst);
+  const left = Math.max(0, total - before - inStage);
+  const over = curEst > 0 ? inStage > curEst : false;
+  const pct = Math.min(98, Math.max(3, (done / total) * 100));
+  const label = over || left < 5 ? 'Almost there, still working' : left >= 90 ? `About ${Math.round(left / 60)} min left` : left >= 50 ? 'About 1 min left' : `About ${Math.max(5, Math.round(left / 5) * 5)} sec left`;
+  return <div className="eta"><div className="etar"><span>{label}</span><small>{list === e.post ? 'Posting to Marketplace' : job.kind === 'buy' ? 'Finding deals' : 'Drafting your listing'}</small></div><div className="etab"><i style={{ width: `${pct}%` }} /></div></div>;
+}
+
 function Stepper({ kind, stage }) {
   const list = STAGES[kind] || STAGES.sell;
   const i = list.indexOf(stage);
@@ -149,6 +175,7 @@ export default function JobPage({ params }) {
     <div className="desk-only"><Stepper kind={job.kind} stage={job.stage} /></div>
     <div className="mprog mob-only"><div className="mprow"><b>{LABEL[job.stage] || job.stage}</b><span>{si + 1}/{stages.length}</span></div>
       <div className="mbar"><i style={{ width: `${doneAll ? 100 : Math.max(6, ((si + 0.5) / stages.length) * 100)}%` }} /></div></div>
+    <Eta job={job} />
     {!workerSeen && <div className="wait"><span className="spin" /><div>Grok Bot is picking this up...
       {age > 60 && <small>Still starting. This page updates on its own.</small>}</div></div>}
     {err && <p className="err">{err}</p>}

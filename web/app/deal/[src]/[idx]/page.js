@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Photo from '../../../../components/Photo';
 const num = (x) => (x === null || x === undefined || x === '' || isNaN(Number(x)) ? null : Number(x));
 const $ = (v) => (num(v) === null ? '-' : '$' + Number(v).toLocaleString(undefined, { maximumFractionDigits: 0 }));
 function srcName(x) { const s = String(x || '').toLowerCase(); if (s.includes('ebay')) return 'eBay'; if (s.includes('amazon')) return 'Amazon'; if (s.includes('facebook') || s.includes('marketplace')) return 'Facebook'; return x ? String(x) : 'Resale'; }
@@ -31,7 +32,7 @@ export default function Deal({ params }) {
   return <main className="wrap dealp">
     <p className="eyebrow"><a href="/dashboard">Dashboard</a> · {ctx || 'Deal'}</p>
     <div className="dhero">
-      <div className="dph">{photo ? <img src={photo} alt={d.title || ''} /> : <div className="noph">{d.title}</div>}</div>
+      <div className="dph"><Photo src={photo} title={d.title} /></div>
       <h1>{d.title}</h1>
     </div>
     <div className="legs3">

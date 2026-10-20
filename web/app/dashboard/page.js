@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import Photo from '../../components/Photo';
 const $ = (v) => (v === null || v === undefined || v === '' || isNaN(Number(v)) ? '-' : '$' + Math.round(Number(v)).toLocaleString());
 const LABEL = { received: 'Received', identifying: 'Identifying', researching: 'Researching', writing: 'Writing', awaiting_approval: 'Needs approval', approved: 'Approved', posting: 'Posting', live: 'Live' };
 function Tick({ value }) {
@@ -88,15 +89,16 @@ export default function Dashboard() {
       <section className="bcol"><div className="bh"><h2>Buy</h2><a className="pill gray sm0" href="/#buy">Find deals</a></div>
         {feed === null && <div className="empty">Loading...</div>}
         {feed !== null && deals.length === 0 && <div className="empty">No deals yet. Scouts post here as they find them.</div>}
-        {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade" style={{ animationDelay: `${k * 50}ms` }}>
-          <a className="it" href={d._href}>{photo ? <img src={photo} alt="" /> : <i className="ph0" />}<span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}<i className="arrow">›</i></a>
+        {deals.slice(0, 30).map((d, k) => { const n = d._n; const photo = d.photo_url || d.image_url || d.image; return <div key={k} className="trade tcard" style={{ animationDelay: `${k * 50}ms` }}>
+          <a className="tph" href={d._href}><Photo src={photo} title={d.title} /></a><div className="tbody">
+          <a className="it" href={d._href}><span><b>{d.title}</b><em className="chip s-src">{d._ex ? 'Example' : d._src}</em></span>{n.disc !== null && isFinite(n.disc) ? <small className="dsc">{Math.round(n.disc)}% under</small> : null}<i className="arrow">›</i></a>
           <div className="flip">
             <a className="leg buyl" href={n.buyUrl || undefined} target="_blank" rel="noopener"><span>Buy here</span><b>FB {$(n.ask)}</b></a>
             <i className="arrow">→</i>
             <a className="leg selll" href={n.sellUrl || undefined} target="_blank" rel="noopener"><span>Sell here</span><b>{n.resell !== null ? `${n.sellSrc} ${$(n.resell)}` : 'Check comps'}</b></a>
             <i className="arrow">=</i>
             {n.profit !== null ? <em className={'pchip big' + (n.profit < 0 ? ' neg' : '')}>{n.profit >= 0 ? '+' : ''}{$(n.profit)}</em> : <em className="pchip big dim">?</em>}
-          </div></div>; })}
+          </div></div></div>; })}
       </section>
     </div>
     <section className="howflip"><h2>How to flip IRL</h2><div className="hf">

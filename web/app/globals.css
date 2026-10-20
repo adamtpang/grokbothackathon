@@ -279,3 +279,24 @@ a.trow:hover,.trow:hover{background:#1b1c1f}
 .confchip{display:inline-block;vertical-align:middle;margin-left:10px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:0}
 .confchip.hi{background:rgba(48,209,88,.16);color:#30d158}.confchip.mid{background:rgba(255,159,10,.16);color:#ff9f0a}.confchip.lo{background:rgba(255,69,58,.16);color:#ff453a}
 .unsure{background:rgba(255,69,58,.12);border:1px solid rgba(255,69,58,.4);color:#ffb4ae;border-radius:12px;padding:10px 14px;font-weight:600;font-size:14px;margin-bottom:12px}
+/* v8 polish */
+:root{--rad:20px}
+.panel,.card,.bcol,.dsec,.lg,.howflip,.trader,.act,.mot,.gscene,.viz{border-radius:var(--rad)!important}
+.phx{width:100%;height:100%;display:grid;place-items:center;background:linear-gradient(135deg,#1d3b6e,#0b0c0e 70%);color:#cfe0ff;font-weight:800;font-size:clamp(28px,30%,64px);aspect-ratio:1}
+.phx span{font-size:40px;line-height:1}
+.tcard{display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center;padding:14px 4px}
+.tcard .tph{display:block;width:132px;height:132px;border-radius:16px;overflow:hidden;background:#111;border:1px solid var(--line)}
+.tcard .tph img,.tcard .tph .phx{width:100%;height:100%;object-fit:cover;display:block}
+.tcard .tbody{min-width:0}
+.tcard .it{display:flex;align-items:flex-start;gap:8px;text-decoration:none;color:#fff}
+.tcard .it b{font-size:16px;white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tcard .leg b{font-size:18px;font-weight:800}
+.tcard .pchip.big{font-size:20px;padding:8px 14px;font-weight:800}
+.dhero .dph .phx{aspect-ratio:auto}.dhero .dph .phx span{font-size:96px}
+.dimg .phx{aspect-ratio:auto;height:100%}
+.trow .pr{font-size:17px;font-weight:800}
+h1{letter-spacing:-.02em}
+@media (max-width:760px){.tcard{grid-template-columns:1fr}.tcard .tph{width:100%;height:auto;aspect-ratio:4/3}.tcard .leg b{font-size:17px}}
+.eta{margin:10px 0 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px}
+.etar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-weight:700;font-size:15px}.etar small{color:var(--muted);font-weight:500;font-size:12px}
+.etab{height:6px;border-radius:99px;background:#232428;overflow:hidden;margin-top:8px}.etab i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),#5ea0ff);transition:width 1s linear}
