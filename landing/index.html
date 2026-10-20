@@ -6,6 +6,9 @@
 <title>Garage Sale Town · Snap it. Sold.</title>
 <meta name="description" content="Snap a photo of anything. Grok Bots identify it, research real prices, write the listing, and post it to Facebook Marketplace when you press A.">
 <meta name="theme-color" content="#000000">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%239bbc0f'/%3E%3Ctext x='32' y='46' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-weight='800' font-size='42' fill='%230f380f'%3ES%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -93,9 +96,27 @@ h3{font-size:clamp(21px,2vw,26px);letter-spacing:-.02em;font-weight:600;line-hei
 .dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
 @keyframes bob{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
 .drop.has .empty{display:none}.drop.has .preview{display:block}.drop.has{border-style:solid;border-color:rgba(155,188,15,.4)}
-.again{margin-top:16px;font-size:14px;color:var(--dim)}
 .note{text-align:center;color:var(--dim);font-size:14px;margin-top:20px}
 
+
+.cap{max-width:880px;margin:48px auto 0;text-align:center}
+.cap .drop{margin:0;min-height:0;padding:clamp(32px,5vw,56px) clamp(20px,4vw,48px);cursor:default;border-style:solid;border-color:rgba(255,255,255,.12);background:linear-gradient(180deg,rgba(28,28,31,.9),rgba(16,16,18,.9));box-shadow:0 40px 120px -40px rgba(155,188,15,.35);display:block}
+.cap .drop.over{border-color:var(--accent);border-style:dashed}
+.pill input,.again input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+label.pill{position:relative;cursor:pointer}
+label.pill:focus-within{outline:3px solid var(--accent2);outline-offset:3px}
+.cbtn{margin-top:28px}.cbtn .pill{font-size:18px;padding:18px 38px}
+.flow{list-style:none;display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:24px;text-align:left;counter-reset:f}
+.flow li{counter-increment:f;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:18px;padding:14px;opacity:.35;transition:opacity .5s,background .5s,border-color .5s,transform .5s}
+.flow li::before{content:counter(f);display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.1);font-size:12px;font-weight:700;margin-bottom:8px}
+.flow li b{display:block;font-size:14px;letter-spacing:-.01em}
+.flow li span{display:block;font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.35}
+.flow li.on{opacity:1;background:rgba(155,188,15,.1);border-color:rgba(155,188,15,.45);transform:translateY(-2px)}
+.flow li.on::before{background:var(--accent);color:#0d1400}
+.pv{font-size:13px;color:var(--dim);margin-top:16px}
+.again{margin-top:14px}
+@media (max-width:760px){.flow{grid-template-columns:1fr}.flow li{display:grid;grid-template-columns:28px 1fr;column-gap:10px;padding:12px 14px}.flow li::before{grid-row:span 2;margin:0}.dt{display:none}}
+@media (prefers-reduced-motion:reduce){.flow li{transition:none}}
 /* buy */
 .deals{grid-template-columns:repeat(auto-fit,minmax(290px,1fr));margin-top:72px}
 .deal{padding:30px}
@@ -149,6 +170,33 @@ footer a{color:var(--muted)}footer a:hover{color:var(--accent)}
     <p class="eyebrow rv">A Grok Bot Hackathon project · Austin</p>
     <h1 class="rv d1"><span class="grad">Snap it.</span><br><span class="green">Sold.</span></h1>
     <p class="lede rv d2">Snap a photo of anything. Grok Bots identify it, research real prices near you and across the internet, write the listing, and post it live to Facebook Marketplace <b>when you press A.</b></p>
+
+    <div class="cap rv d2" id="sell">
+      <div class="drop" id="drop">
+        <div class="empty">
+          <div class="cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
+          <h3>What are you selling?</h3>
+          <p>Snap it or upload it. <span class="dt">Or drop a photo here.</span></p>
+          <div class="pills cbtn">
+            <label class="pill primary"><input type="file" accept="image/*" capture="environment" class="fin" aria-label="Take photo">Take photo</label>
+            <label class="pill ghost"><input type="file" accept="image/*" class="fin" aria-label="Upload photo">Upload photo</label>
+          </div>
+        </div>
+        <div class="preview" aria-live="polite">
+          <img id="previewImg" alt="Your photo">
+          <div class="status"><span class="dots"><i></i><i></i><i></i></span><span id="statusText">The bots are on it.</span></div>
+          <ol class="flow" id="flow">
+            <li><b>Identify</b><span>Works out exactly what it is.</span></li>
+            <li><b>Research prices</b><span>Local comps first, then eBay sold and Amazon.</span></li>
+            <li><b>Write listing</b><span>Title, condition, specs, fair price.</span></li>
+            <li><b>Approve (press A)</b><span>You confirm on a real Game Boy.</span></li>
+            <li><b>Live on Marketplace</b><span>Posted to Facebook. Scan the QR.</span></li>
+          </ol>
+          <p class="pv" id="pvNote">Preview only. Your photo stays on this device until the hub is connected.</p>
+          <label class="again pill ghost mini"><input type="file" accept="image/*" class="fin" aria-label="Choose another photo">Try another photo</label>
+        </div>
+      </div>
+    </div>
     <div class="pills rv d3">
       <a class="pill primary" href="#sell">Sell</a>
       <a class="pill ghost" href="#buy">Buy</a>
@@ -236,30 +284,6 @@ footer a{color:var(--muted)}footer a:hover{color:var(--accent)}
   </div>
 </section>
 
-<section id="sell" class="alt">
-  <div class="wrap">
-    <div class="center">
-      <p class="eyebrow rv">Sell</p>
-      <h2 class="rv d1">Show us<br><span class="grad">what you've got.</span></h2>
-      <p class="lede rv d2" style="margin-top:24px">Drop a photo or open your camera. That's the whole form.</p>
-    </div>
-    <label class="drop rv d2" id="drop">
-      <input id="photo" type="file" accept="image/*" capture="environment" aria-label="Take or upload a photo of your item">
-      <div class="empty">
-        <div class="cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg></div>
-        <h3>Snap a photo</h3>
-        <p>Tap to open your camera, or drop an image here.</p>
-      </div>
-      <div class="preview" aria-live="polite">
-        <img id="previewImg" alt="Your photo">
-        <div class="status"><span class="dots"><i></i><i></i><i></i></span><span id="statusText">The bots are on it.</span></div>
-        <p class="again">Tap to choose a different photo.</p>
-      </div>
-    </label>
-    <p class="note rv">Your photo stays on this device for now. Nothing is uploaded from this page yet.</p>
-  </div>
-</section>
-
 <section id="buy">
   <div class="wrap">
     <div class="center">
@@ -333,12 +357,25 @@ window.GST_HUB_URL = window.GST_HUB_URL || "";
   var svg = document.querySelector(".town svg");
   if (reduce && svg && svg.pauseAnimations) { svg.pauseAnimations(); }
 
-  // Photo drop zone
+  // Hero capture card
   var drop = document.getElementById("drop");
-  var input = document.getElementById("photo");
   var img = document.getElementById("previewImg");
   var statusText = document.getElementById("statusText");
-  var lastUrl = null;
+  var steps = document.querySelectorAll("#flow li");
+  var pvNote = document.getElementById("pvNote");
+  var lastUrl = null, timers = [];
+
+  function play() {
+    timers.forEach(clearTimeout); timers = [];
+    steps.forEach(function (li) { li.classList.remove("on"); });
+    var gap = reduce ? 0 : 1100;
+    steps.forEach(function (li, i) {
+      timers.push(setTimeout(function () {
+        li.classList.add("on");
+        if (i === steps.length - 1 && !window.GST_HUB_URL) statusText.textContent = "That's the whole flow. Preview mode.";
+      }, 300 + i * gap));
+    });
+  }
 
   function handle(file) {
     if (!file || !/^image\//.test(file.type)) return;
@@ -347,6 +384,8 @@ window.GST_HUB_URL = window.GST_HUB_URL || "";
     img.src = lastUrl;
     drop.classList.add("has");
     statusText.textContent = "The bots are on it.";
+    pvNote.textContent = window.GST_HUB_URL ? "Sending to the hub." : "Preview only. Your photo stays on this device until the hub is connected.";
+    play();
     sendToHub(file);
   }
 
@@ -357,11 +396,13 @@ window.GST_HUB_URL = window.GST_HUB_URL || "";
     fd.append("image", file, file.name || "photo.jpg");
     fetch(hub + "/api/jobs", { method: "POST", body: fd })
       .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json().catch(function () { return {}; }); })
-      .then(function () { statusText.textContent = "Sent to town. The bots are on it."; })
-      .catch(function () { statusText.textContent = "Couldn't reach the hub. Your photo is still here."; });
+      .then(function () { pvNote.textContent = "Sent to town. The bots are on it."; })
+      .catch(function () { pvNote.textContent = "Couldn't reach the hub. Your photo is still here."; });
   }
 
-  input.addEventListener("change", function () { handle(input.files && input.files[0]); });
+  document.querySelectorAll(".fin").forEach(function (inp) {
+    inp.addEventListener("change", function () { handle(inp.files && inp.files[0]); inp.value = ""; });
+  });
   ["dragenter", "dragover"].forEach(function (t) {
     drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add("over"); });
   });
