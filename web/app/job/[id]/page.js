@@ -21,7 +21,7 @@ function Stepper({ kind, stage }) {
   const list = STAGES[kind] || STAGES.sell;
   const i = list.indexOf(stage);
   return <div className="stepper">{list.map((s, k) => (
-    <div key={s} className={'st' + (k < i || (k === i && (s === 'live' || s === 'done')) ? ' done' : k === i ? ' cur' : '')}><i>{k < i ? '✓' : k + 1}</i>{LABEL[s] || s}</div>
+    <div key={s} className={'st' + (k < i || (k === i && (s === 'live' || s === 'done')) ? ' done' : k === i ? ' cur' : '')}><i>{k < i || (k === i && (s === 'live' || s === 'done')) ? '✓' : k + 1}</i>{LABEL[s] || s}</div>
   ))}{i < 0 && stage ? <div className="st cur"><i>•</i>{stage}</div> : null}</div>;
 }
 

@@ -113,7 +113,7 @@ h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.035em;line-height:1.05;font-w
 .approve{border-color:rgba(8,102,255,.5);background:linear-gradient(160deg,#0b1a33,var(--card) 70%)}
 .approve .row{align-items:center}.approve .field{max-width:170px;font-size:20px;font-weight:700}
 .livep{text-align:center;border-color:rgba(49,209,88,.4);background:linear-gradient(160deg,#0b2414,var(--card) 70%)}
-.livep img{width:220px;height:220px;border-radius:16px;background:#fff;padding:10px;margin:16px auto}
+.livep .pill{margin-top:4px}.livep img{display:block;width:220px;height:220px;border-radius:16px;background:#fff;padding:10px;margin:16px auto}
 .deals{display:grid;gap:12px}
 .deal{display:grid;grid-template-columns:1fr auto;gap:12px;background:var(--card2);border-radius:18px;padding:16px}
 .deal .dt{font-weight:700;font-size:16px}.deal .ask{font-size:24px;font-weight:800}.deal .mkt{color:var(--dim);text-decoration:line-through}

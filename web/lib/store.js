@@ -61,7 +61,7 @@ export async function fireWebhook(job, event, extra = {}) {
     });
     return { ok: r.ok, status: r.status };
   } catch (e) {
-    return { ok: false, error: e.name === 'AbortError' ? 'timeout' : String(e.message || e) };
+    return { ok: false, error: e.name === 'AbortError' ? 'timeout' : String((e.cause && e.cause.code) || e.name || 'error') };
   } finally {
     clearTimeout(t);
   }
